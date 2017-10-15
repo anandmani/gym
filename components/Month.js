@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   dummyCell: {
     flexBasis: `${100 / 7}%`,
     // height: `${100 / 6}%`,
-    height: (windowHeight - 100)/6
+    height: (windowHeight - 200)/6
   },
   cell: {
     borderBottomWidth: 0.5,

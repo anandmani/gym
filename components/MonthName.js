@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 0.5,
     borderBottomColor: '#e5e5e5',
-    backgroundColor: '#f9f9f9',
+    // backgroundColor: '#ffe5ee',
+    backgroundColor: '#f6f6f6',
   },
   title: {
     textAlign: 'center',

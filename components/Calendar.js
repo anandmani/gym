@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Month from './components/Month'
-import MonthName from './components/MonthName'
-import Exponent from 'expo'
+import Month from './Month'
+import MonthName from './MonthName'
 
 export default class App extends React.Component {
   render() {
@@ -40,6 +39,13 @@ export default class App extends React.Component {
             month={10}
             year={2017}
           />
+          <MonthName
+            month={11}
+          />
+          <Month
+            month={11}
+            year={2017}
+          />
         </ScrollView>
 
       </View>
@@ -49,21 +55,23 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: Exponent.Constants.statusBarHeight
+    flex: 1
   },
   toolbar: {
     height: 56,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    // backgroundColor: '#ff7faa',
   },
   title: {
     flex: 1,
     marginLeft: 16,
     fontSize: 20,
+    // color: 'white'
   },
   leftIcon: {
-    margin: 16
+    margin: 16,
+    // color: 'white'
   },
   months: {
     flex: 1,

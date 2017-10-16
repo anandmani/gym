@@ -8,12 +8,14 @@ export function daysInMonth(month, year) {
 }
 
 export function getDay(day, month, year) {
-  return new Date(year, month-1, day).getDay()
+  return new Date(year, month - 1, day).getDay()
 }
 
 export function getMonthName(month) {
   return monthNames[month - 1]
 }
+
+export const colors = ['#a8e6cf', '#dcedc1', '#ffd3b6', '#ffaaa5', '#ff8b94']
 
 // export const getMonthArray = (month, year) => {
 //   const size = new Date(year, month, 0).getDate();

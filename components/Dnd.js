@@ -1,80 +1,108 @@
 import React, { PureComponent } from 'react'
-import { ScrollView, View, StyleSheet, PanResponder } from 'react-native'
+import { ScrollView, View, Text, StyleSheet, Button } from 'react-native'
+import Card from './Card'
 
 export default class Dnd extends PureComponent {
 
-  panResponder = {}
-  previousTop = 0
-  previousLeft = 0
-  elementStyles = {}
-  element = null
+  state = {
+    cards: [0, 1, 2, 3]
+  }
 
-  componentWillMount() {
-    this.elementStyles = {
-      style: {
-        top: this.previousTop,
-        left: this.previousLeft
-      }
+  locationMap = {}
+  children = []
+  childrenMeta = []
+  draggedCardOriginalIndex = null
+
+  generateId = () => Math.floor(Math.random() * 10000)
+
+  getChildMeta = (index, ox, oy, width, height, px, py) => {
+    this.childrenMeta[index] = {
+      height,
+      midY: py + height / 2
     }
-    this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: this.handleStartShouldSetPanResponder,
-      onMoveShouldSetPanResponder: this.handleMoveShouldSetPanResponder,
-      onPanResponderGrant: this.handlePanResponderGrant,
-      onPanResponderMove: this.handlePanResponderMove,
-      onPanResponderRelease: this.handlePanResponderEnd,
-      onPanResponderTerminate: this.handlePanResponderEnd,
-    });
   }
 
-  updateNativeStyles = () => {
-    this.element && this.element.setNativeProps(this.elementStyles)
+  componentDidMount() {
+    setTimeout(() => { //inside setTimeout to wait for native render to finish
+      this.children.map((child, index) => {
+        child.element.measure(this.getChildMeta.bind(null, index))
+      })
+    })
   }
 
-  highlight = () => {
-    this.elementStyles = {
+  shiftCard = (card, height) => {
+    let prevTop = card.elementStyles.style.top
+    card.elementStyles = ({
       style: {
-        backgroundColor: 'blue'
+        top: prevTop + height
       }
+    })
+    card.updateNativeStyles()
+  }
+
+  handleDragStart = (id) => {
+    this.draggedCardOriginalIndex = this.locationMap[id]
+  }
+
+  handleDrag = (id, pos) => {
+    const index = this.locationMap[id]
+    if (index !== this.children.length - 1 && pos > this.childrenMeta[index + 1].midY) {
+      this.shiftCard(this.children[index + 1], -1 * this.childrenMeta[index].height) //shift next card up
+      //Updating this.locationMap
+      this.locationMap[id] = index + 1
+      this.locationMap[this.children[index + 1].id] = index
+      //Updating this.children
+      const temp = this.children[index + 1]
+      this.children[index + 1] = this.children[index]
+      this.children[index] = temp
+
     }
-    this.updateNativeStyles()
-  }
+    else if (index !== 0 && pos < this.childrenMeta[index - 1].midY) {
+      this.shiftCard(this.children[index - 1], this.childrenMeta[index].height) //shift prev card down
+      //Updating this.locationMap
+      this.locationMap[id] = index - 1
+      this.locationMap[this.children[index - 1].id] = index
+      //Updating this.children
+      const temp = this.children[index]
+      this.children[index] = this.children[index - 1]
+      this.children[index - 1] = temp
 
-  unHighlight = () => {
-    this.elementStyles = {
-      style: {
-        backgroundColor: 'black'
-      }
     }
-    this.updateNativeStyles()
   }
 
-  handleStartShouldSetPanResponder = () => true
-
-  handleMoveShouldSetPanResponder = () => true
-
-  handlePanResponderGrant = (e) => {
-    this.highlight()
+  handleDragEnd = (id) => {
+    let newCards = [...this.state.cards]
+    let draggedCard = newCards.splice(this.draggedCardOriginalIndex, 1)[0]
+    newCards.splice(this.locationMap[id], 0, draggedCard)
+    this.setState({
+      cards: newCards
+    })
+    this.draggedCardOriginalIndex = null
   }
 
-  handlePanResponderMove = (e, gestureState) => {
-    this.elementStyles.style.top = this.previousTop + gestureState.dy
-    this.updateNativeStyles()
-  }
-
-  handlePanResponderEnd = (e, gestureState) => {
-    // this.previousLeft += gestureState.dx;
-    console.log("handlePanResponderEnd")
-    this.unHighlight()
-    this.previousTop += gestureState.dy;
+  renderCard = (item, index) => {
+    const id = this.generateId()
+    this.locationMap[id] = index  //setting position of card `id`
+    return (
+      <Card
+        key={item}
+        ref={(element) => this.children[index] = element}
+        value={item}
+        id={id}
+        style={styles.card}
+        onDragStart={this.handleDragStart}
+        onDrag={this.handleDrag}
+        onDragEnd={this.handleDragEnd}
+      />
+    )
   }
 
   render() {
     return (
-      <View
-        ref={(element) => this.element = element}
-        {...this.panResponder.panHandlers}
-        style={styles.row}
-      >
+      <View style={{ backgroundColor: this.state.bg }}>
+        {
+          this.state.cards.map(this.renderCard)
+        }
       </View>
     )
   }
@@ -82,11 +110,8 @@ export default class Dnd extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-  row: {
-    height: 50,
-    borderBottomWidth: 1,
-    backgroundColor: 'black'
-
+  container: {
+    backgroundColor: 'grey'
   }
 })
 

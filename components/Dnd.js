@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { ScrollView, View, Text, StyleSheet, Button } from 'react-native'
 import Card from './Card'
-import _ from 'lodash'
+import throttle from 'lodash.throttle'
 
 const dragScrollThreshold = 20
 
@@ -73,13 +73,13 @@ export default class Dnd extends PureComponent {
   }
 
   //We are thorttling this because, scrollTo (takes some time to do/ done asyn?). Thus, it cannot keep up with updateNativeStyles.
-  scrollDown = _.throttle((index) => {
+  scrollDown = throttle((index) => {
     this.scrollView.scrollTo({ y: this.scrollOffset + 10, animated: false })
     this.children[index].previousTop += 10  //Pulling the dragged card along with scroll
     this.children[index].updateNativeStyles()
   }, 100)
 
-  scrollUp = _.throttle((index) => {
+  scrollUp = throttle((index) => {
     this.scrollView.scrollTo({ y: this.scrollOffset - 10, animated: false })
     this.children[index].previousTop -= 10  //Pulling the dragged card along with scroll
     this.children[index].updateNativeStyles()

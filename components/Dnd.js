@@ -5,7 +5,7 @@ import Card from './Card'
 export default class Dnd extends PureComponent {
 
   state = {
-    cards: [0, 1, 2, 3]
+    cards: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   }
 
   locationMap = {}

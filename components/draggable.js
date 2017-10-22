@@ -44,7 +44,8 @@ export default (Component) => (
       this.elementStyles = {
         style: {
           opacity: 0.5,
-          elevation: 10
+          elevation: 2,
+          transform: [{ rotateZ: '5deg' }]
         }
       }
       this.updateNativeStyles()
@@ -54,7 +55,8 @@ export default (Component) => (
       this.elementStyles = {
         style: {
           opacity: 1,
-          elevation: 0
+          elevation: 1,
+          transform: [{ rotateZ: '0deg' }]
         }
       }
       this.updateNativeStyles()

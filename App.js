@@ -5,15 +5,13 @@ import Calendar from './components/Calendar'
 import Workout from './components/Workout'
 import Exercise from './components/Exercise'
 import Compare from './components/Compare'
-import Dnd from './components/Dnd'
 import Test from './components/Test'
 
 export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Dnd />
-        {/* <Test /> */}
+        <Test />
         {/* <Workout />  */}
         {/* <Exercise /> */}
         {/* <Calendar /> */}

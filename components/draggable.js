@@ -43,7 +43,7 @@ export default (Component) => (
     highlight = () => {
       this.elementStyles = {
         style: {
-          opacity: 0.5,
+          opacity: 0.8,
           elevation: 2,
           transform: [{ rotateZ: '5deg' }]
         }

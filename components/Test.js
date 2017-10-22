@@ -5,7 +5,8 @@ import Dnd from './Dnd'
 export default class Test extends PureComponent {
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
+        <View style={{ backgroundColor: 'black', height: 100 }} />
         <Dnd />
       </View>
     )

@@ -7,7 +7,7 @@ export default class Dnd extends PureComponent {
   state = {
     cards: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   }
-
+  scrollOffset = 0
   locationMap = {}
   children = []
   childrenMeta = []
@@ -50,6 +50,7 @@ export default class Dnd extends PureComponent {
 
   handleDrag = (id, pos) => {
     const index = this.locationMap[id]
+    pos = this.scrollOffset + pos //Card positions are computed on componentDidMount which are at scroll = 0. Therefore, adding scrollOffet to position. (pageY is based on the screen. top-left of screen corresponds to pageY = 0. If we scroll down, the already computed midY is not valid. Hence we add scrollOffset)
     if (index !== this.children.length - 1 && pos > this.childrenMeta[index + 1].midY) {
       this.shiftCard(this.children[index + 1], -1 * this.childrenMeta[index].height) //shift next card up
       //Updating this.locationMap
@@ -101,12 +102,15 @@ export default class Dnd extends PureComponent {
     )
   }
 
+  setScrollOffset = (e) => {
+    this.scrollOffset = e.nativeEvent.contentOffset.y
+  }
+
   render() {
-    //Need to re-compute card pagePositions after scrolling. If a card is out of view, it's y will be negative
     return (
       <ScrollView
         style={{ backgroundColor: this.state.bg }}
-        onMomentumScrollEnd={this.getChildrenMeta}
+        onScroll={this.setScrollOffset}
       >
         {
           this.state.cards.map(this.renderCard)

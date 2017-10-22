@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, PanResponder } from 'react-native'
+import { View, PanResponder, StyleSheet } from 'react-native'
 
 export default (Component) => (
 
@@ -89,6 +89,7 @@ export default (Component) => (
         <View
           ref={(element) => this.element = element}
           collapsable={false}
+          style={styles.container}
           {...this.panResponder.panHandlers}
         >
           <Component {...this.props} />
@@ -99,3 +100,9 @@ export default (Component) => (
   }
 
 )
+
+const styles = StyleSheet.create({
+  container: {
+    marginRight: 50
+  }
+})

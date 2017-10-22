@@ -22,11 +22,15 @@ export default class Dnd extends PureComponent {
     }
   }
 
+  getChildrenMeta = () => {
+    this.children.map((child, index) => {
+      child.element.measure(this.getChildMeta.bind(null, index))
+    })
+  }
+
   componentDidMount() {
     setTimeout(() => { //inside setTimeout to wait for native render to finish
-      this.children.map((child, index) => {
-        child.element.measure(this.getChildMeta.bind(null, index))
-      })
+      this.getChildrenMeta()
     })
   }
 
@@ -98,12 +102,16 @@ export default class Dnd extends PureComponent {
   }
 
   render() {
+    //Need to re-compute card pagePositions after scrolling. If a card is out of view, it's y will be negative
     return (
-      <View style={{ backgroundColor: this.state.bg }}>
+      <ScrollView
+        style={{ backgroundColor: this.state.bg }}
+        onMomentumScrollEnd={this.getChildrenMeta}
+      >
         {
           this.state.cards.map(this.renderCard)
         }
-      </View>
+      </ScrollView>
     )
   }
 

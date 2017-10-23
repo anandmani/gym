@@ -1,6 +1,15 @@
 import React, { PureComponent } from 'react'
 import { View, PanResponder, StyleSheet } from 'react-native'
 
+const _getDistanceBetweenPoints = (aX, aY, bX, bY) => {
+  var deltaX = aX - bX;
+  var deltaY = aY - bY;
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+const LONG_PRESS_THRESHOLD = 500
+const LONG_PRESS_ALLOWED_MOVEMENT = 10
+
 export default (Component) => (
 
   class Draggable extends PureComponent {
@@ -9,6 +18,8 @@ export default (Component) => (
     previousTop = 0
     elementStyles = {}
     element = null
+    initialPressLocation = null
+    isDragging = false
 
     componentWillMount() {
       this.elementStyles = {
@@ -34,6 +45,10 @@ export default (Component) => (
         }
       }
       this.element.setNativeProps(this.elementStyles)
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.longPressTimeout)
     }
 
     updateNativeStyles = () => {
@@ -62,25 +77,51 @@ export default (Component) => (
       this.updateNativeStyles()
     }
 
+    setInitialPressLocation = (e) => {
+      let { pageX, pageY } = e.nativeEvent
+      this.initialPressLocation = { pageX, pageY }
+    }
+
     handleStartShouldSetPanResponder = () => true
 
     handleMoveShouldSetPanResponder = () => true
 
-    handlePanResponderGrant = () => {
-      this.props.onDragStart(this.props.id)
-      this.highlight()
+    handlePanResponderGrant = (e, gestureState) => {
+      console.log("handlePanResponderGrant")
+      this.setInitialPressLocation(e)
+      this.longPressTimeout = setTimeout(() => {
+        this.highlight()
+        this.isDragging = true
+        this.props.onDragStart(this.props.id)
+      }, LONG_PRESS_THRESHOLD)
+      // this.props.onDragStart(this.props.id)
+      // this.highlight()
     }
 
     handlePanResponderMove = (e, gestureState) => {
-      this.elementStyles.style.top = this.previousTop + gestureState.dy
-      this.updateNativeStyles()
-      this.props.onDrag(this.props.id, e.nativeEvent.pageY)
+      console.log("handlePanResponderMove")
+      if (!this.isDragging) {
+        let { pageX, pageY } = e.nativeEvent
+        if (_getDistanceBetweenPoints(pageX, pageY, this.initialPressLocation.pageX, this.initialPressLocation.pageY) > LONG_PRESS_ALLOWED_MOVEMENT) {
+          clearInterval(this.longPressTimeout)
+        }
+      }
+      else {
+        this.elementStyles.style.top = this.previousTop + gestureState.dy
+        this.updateNativeStyles()
+        this.props.onDrag(this.props.id, e.nativeEvent.pageY)
+      }
     }
 
     handlePanResponderEnd = (e, gestureState) => {
-      this.unHighlight()
-      this.props.onDragEnd(this.props.id)
-      this.previousTop += gestureState.dy;
+      if (this.isDragging) {
+        this.isDragging = false
+        this.unHighlight()
+        this.props.onDragEnd(this.props.id)
+        this.previousTop += gestureState.dy;
+      }
+      this.initialPressLocation = null
+      clearInterval(this.longPressTimeout)
     }
 
     render() {

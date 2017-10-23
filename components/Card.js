@@ -18,7 +18,7 @@ class Card extends PureComponent {
 
 const styles = StyleSheet.create({
   card: {
-    height: 40,
+    height: 50,
     margin: 10,
     backgroundColor: 'white',
     elevation: 1,

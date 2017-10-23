@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, PanResponder, StyleSheet } from 'react-native'
+import { View, PanResponder } from 'react-native'
 
 const _getDistanceBetweenPoints = (aX, aY, bX, bY) => {
   var deltaX = aX - bX;
@@ -7,7 +7,7 @@ const _getDistanceBetweenPoints = (aX, aY, bX, bY) => {
   return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 }
 
-const LONG_PRESS_THRESHOLD = 500
+const LONG_PRESS_THRESHOLD = 400
 const LONG_PRESS_ALLOWED_MOVEMENT = 10
 
 export default (Component) => (
@@ -70,7 +70,7 @@ export default (Component) => (
       this.elementStyles = {
         style: {
           opacity: 1,
-          elevation: 1,
+          elevation: 0,
           transform: [{ rotateZ: '0deg' }]
         }
       }
@@ -91,10 +91,10 @@ export default (Component) => (
     }
 
     handleMoveShouldSetPanResponder = (e, gestureState) => {
-      let { pageX, pageY } = e.nativeEvent
       if (this.shouldGrantResponder) {
         return true
       }
+      let { pageX, pageY } = e.nativeEvent
       if (_getDistanceBetweenPoints(pageX, pageY, this.initialPressLocation.pageX, this.initialPressLocation.pageY) > LONG_PRESS_ALLOWED_MOVEMENT) {
         clearInterval(this.longPressTimeout)
       }
@@ -114,11 +114,11 @@ export default (Component) => (
 
     handlePanResponderEnd = (e, gestureState) => {
       this.unHighlight()
-      this.props.onDragEnd(this.props.id)
-      this.previousTop += gestureState.dy;
-      this.shouldGrantResponder = false
-      this.initialPressLocation = null
+      this.shouldGrantResponder = false //Setting this before props.onDragEnd as it make take time to complete and we don't want another touch event to grant panResponder
       clearInterval(this.longPressTimeout)
+      this.previousTop += gestureState.dy;
+      this.props.onDragEnd(this.props.id)
+      this.initialPressLocation = null
     }
 
     render() {
@@ -127,7 +127,6 @@ export default (Component) => (
         <View
           ref={(element) => this.element = element}
           collapsable={false}
-          style={styles.container}
           {...this.panResponder.panHandlers}
         >
           <Component {...this.props} />
@@ -138,9 +137,3 @@ export default (Component) => (
   }
 
 )
-
-const styles = StyleSheet.create({
-  container: {
-    marginRight: 50
-  }
-})

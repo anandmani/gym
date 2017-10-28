@@ -10,10 +10,8 @@ export default class Workout extends PureComponent {
     super(props)
     this.dbKey = this.props.navigation.state.params && this.props.navigation.state.params.dbKey
     this.state = {
-      workout: {
-        name: null,
-        exercises: []
-      },
+      name: null,
+      exercises: [],
       loading: this.dbKey ? true : false
     }
   }
@@ -48,10 +46,17 @@ export default class Workout extends PureComponent {
     )
   }
 
+  saveExercise = (index, exercise) => {
+    const newExercises = [...this.state.exercises]
+    newExercises[index] = exercise
+    this.setState({ exercises: newExercises })
+  }
+
   addExercise = () => {
-    this.props.navigation.navigate('Exercise')
-    // const newExercises = { ...this.state.exercises }
-    // newExercises.push()
+    this.props.navigation.navigate('Exercise', {
+      index: this.state.exercises.length,
+      onSave: this.saveExercise
+    })
   }
 
   render() {
@@ -77,7 +82,7 @@ export default class Workout extends PureComponent {
           <TextInput
             placeholder="Name"
             style={styles.textInput}
-            value={this.state.workout.name}
+            value={this.state.name}
 
           />
         </View>
@@ -91,7 +96,7 @@ export default class Workout extends PureComponent {
           style={styles.scrollView}
         >
           {
-            this.state.workout.exercises.map(this.renderExerciseRow)
+            this.state.exercises.map(this.renderExerciseRow)
           }
           <TouchableNativeFeedback
             background={TouchableNativeFeedback.Ripple('#5cb85c')}

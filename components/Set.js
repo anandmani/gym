@@ -104,12 +104,13 @@ export default class Set extends PureComponent {
         {
           (this.props.set.get('reps') !== undefined) ?
             <View style={styles.repsView}>
-              <TextField
+              <TextInput
                 placeholder='Reps'
                 keyboardType="numeric"
                 style={styles.textInput}
                 value={this.props.set.get('reps')}
                 onChangeText={this.handleRepsChange}
+                selectTextOnFocus
               />
               {
                 this.props.showRemoveIcons && this.props.set.getIn(['measure', 'units']) ?
@@ -131,12 +132,13 @@ export default class Set extends PureComponent {
         {
           this.props.set.getIn(['measure', 'units']) ?
             <View style={styles.measureView}>
-              <TextField
+              <TextInput
                 placeholder={this.getMeasurePlaceholder()}
                 keyboardType="numeric"
                 style={styles.textInput}
                 value={this.props.set.getIn(['measure', 'value'])}
                 onChangeText={this.handleMeasureValueChange}
+                selectTextOnFocus
               />
               <Picker
                 selectedValue={this.props.set.getIn(['measure', 'units'])}

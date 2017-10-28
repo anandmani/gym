@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
-import { DrawerNavigator } from 'react-navigation'
+import { StackNavigator } from 'react-navigation'
 import Exponent from 'expo'
 import { Ionicons } from '@expo/vector-icons';
 import Calendar from './components/Calendar/Calendar'
@@ -26,21 +26,28 @@ import sampleData from './sampleData.json'
 //   }
 // }
 
-const NavContainer = DrawerNavigator({
-  Exercise: {
-    screen: Exercise
+const NavContainer = StackNavigator(
+  {
+    Workout: {
+      screen: Workout
+    },
+    Exercise: {
+      screen: Exercise
+    },
+    Calendar: {
+      screen: Calendar
+    },
+    Compare: {
+      screen: Compare
+    }
   },
-  Calendar: {
-    screen: Calendar
-  },
-  Workout: {
-    screen: Workout
-  },
-
-  Compare: {
-    screen: Compare
+  {
+    headerMode: 'none',
+    cardStyle: {
+      backgroundColor: 'white'
+    }
   }
-})
+)
 
 const dummy = () => new Promise((resolve) => {
   setTimeout(() => resolve(), 4000)

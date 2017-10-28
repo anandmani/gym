@@ -29,6 +29,13 @@ export default class Exercise extends PureComponent {
         name: false
       }
     }
+    this.nameInput
+  }
+
+  focusNameInput = () => this.nameInput.focus()
+
+  componentDidMount() {
+    setTimeout(this.focusNameInput)
   }
 
   addSet = () => {
@@ -89,7 +96,11 @@ export default class Exercise extends PureComponent {
 
   handleSubmit = () => {
     if (this.validateForm()) {
-      console.log("done")
+      const { onSave, index } = this.props.navigation.state.params
+      const { name, sets } = this.state
+      sets = sets.map(set => set.toJS())
+      onSave(index, { name, sets })
+      this.props.navigation.goBack()
     }
   }
 
@@ -120,6 +131,8 @@ export default class Exercise extends PureComponent {
             onChangeText={this.handleNameChange}
             style={styles.textInput}
             error={this.state.errors.name}
+            refCallback={(element) => this.nameInput = element}
+            selectTextOnFocus
           />
         </View>
 

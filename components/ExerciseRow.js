@@ -11,7 +11,7 @@ export default class ExerciseRow extends PureComponent {
       <View style={styles.set} key={index}>
         {
           set.reps ?
-            <Text style={styles.lineOne}>
+            <Text style={styles.lineOne} numberOfLines={1}>
               {`${set.reps} reps`}
             </Text>
             :
@@ -19,8 +19,8 @@ export default class ExerciseRow extends PureComponent {
         }
         {
           set.measure ?
-            <Text style={styles.lineTwo}>
-              {set.measure}
+            <Text style={styles.lineTwo} numberOfLines={1}>
+              {`${set.measure.value} ${set.measure.units} `}
             </Text>
             :
             null
@@ -30,6 +30,7 @@ export default class ExerciseRow extends PureComponent {
   }
 
   render() {
+    console.log("this.props", this.props)
     return (
       <View style={styles.container}>
         <TouchableNativeFeedback
@@ -45,30 +46,34 @@ export default class ExerciseRow extends PureComponent {
             />
           </View>
         </TouchableNativeFeedback>
-        <TouchableNativeFeedback
-          background={TouchableNativeFeedback.Ripple('#cccccc')}
-          onPress={this.openExercise}
-        >
-          <View style={styles.exercise}>
-            <Text style={styles.heading} numberOfLines={1}>
-              {this.props.name}
-            </Text>
-            <ScrollView
-              horizontal={true}
-            >
-              {
-                this.props.sets.map(this.renderSets)
-              }
+        <View style={styles.exercise}>
+          <TouchableNativeFeedback
+            background={TouchableNativeFeedback.Ripple('#cccccc')}
+            onPress={this.openExercise}
+          >
+            <View style={styles.headingView}>
+              <Text style={styles.heading} numberOfLines={1}>
+                {this.props.name}
+              </Text>
               <View style={styles.arrowIconWrapper}>
                 <Ionicons
                   name="ios-arrow-dropright"
-                  size={20}
+                  size={15}
                 />
               </View>
-            </ScrollView>
+            </View>
+          </TouchableNativeFeedback>
+          <ScrollView
+            horizontal={true}
+            style={styles.sets}
+          >
+            {
+              this.props.sets.map(this.renderSets)
+            }
+          </ScrollView>
 
-          </View>
-        </TouchableNativeFeedback>
+        </View>
+
       </View>
     )
   }
@@ -94,17 +99,27 @@ const styles = StyleSheet.create({
   },
   exercise: {
     flex: 1,
-    marginRight: 16,
     justifyContent: 'center'
+  },
+  headingView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16
   },
   heading: {
     fontSize: 16
   },
+  sets: {
+    marginTop: 5
+  },
   set: {
-    width: 75,
+    width: 50,
+    marginRight: 5,
     justifyContent: 'center',
-    alignItems: 'center'
-    // paddingLeft: 16,
+    alignItems: 'center',
+    borderRadius: 4,
+    backgroundColor: '#f2f2f2',
   },
   lineOne: {
     fontSize: 13,
@@ -115,6 +130,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   arrowIconWrapper: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginLeft: 15
   }
 })

@@ -9,15 +9,22 @@ const errorProps = {
 }
 
 export default class TextField extends PureComponent {
+
+  componentDidMount() {
+    this.props.refCallback(this.element)
+  }
+
   render() {
     return this.props.error ?
       <TextInput
         {...this.props}
         {...errorProps}
+        ref={(element) => this.element = element}
       />
       :
       <TextInput
         {...this.props}
+        ref={(element) => this.element = element}
       />
   }
 }

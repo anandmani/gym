@@ -3,16 +3,16 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import LineGraph from './LineGraph'
 import BarGraph from './BarGraph'
+import ToolbarIcon from './ToolbarIcon'
 
 export default class Compare extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.toolbar}>
-          <Ionicons
-            name="ios-arrow-back"
-            size={32}
-            style={styles.leftIcon}
+          <ToolbarIcon
+            iconName="md-arrow-back"
+            onPress={() => this.props.navigation.goBack()}
           />
           <Text
             style={styles.title}

@@ -1,21 +1,36 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, View, Text, Dimensions } from 'react-native'
-import { daysInMonth, getDay } from '../utils'
-const {height: windowHeight, width: windowWidth} = Dimensions.get('window');
+import { StyleSheet, View, Text, AsyncStorage } from 'react-native'
+import { daysInMonth, getDay } from '../../utils'
+import Day from './Day'
 
 const today = new Date()
-const a = new Array(31).fill(1)
 
 export default class Month extends PureComponent {
+
   constructor(props) {
     super(props)
+    this.state = {
+      workouts: null
+    }
     this.numberOfCells = daysInMonth(props.month, props.year)
     this.numberOfDummyCells = getDay(1, props.month, props.year)
   }
+
+  fetchWorkouts = async () => {
+    const { month, year } = this.props
+    return await AsyncStorage.getItem(`${month}-${year}`)
+  }
+
+  componentDidMount() {
+    this.fetchWorkouts()
+      .then((workouts) => this.setState({ workouts: JSON.parse(workouts) }))
+  }
+
+  generateDbKey = (day, month, year) => `${day}-${month}-${year}`
+
   render() {
     return (
       <View style={styles.container}>
-
         <View style={styles.grid}>
           {
             Array(this.numberOfDummyCells).fill().map((item, index) => (
@@ -24,20 +39,20 @@ export default class Month extends PureComponent {
           }
           {
             Array(this.numberOfCells).fill().map((item, index) => (
-              <Text style={styles.realCell} key={index}>
-                {index + 1}
-              </Text>
+              <Day
+                key={index}
+                day={index + 1}
+                dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
+                workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
+                navigation={this.props.navigation}
+              />
             ))
           }
         </View>
       </View>
     )
   }
-}
 
-Month.defaultProps = {
-  month: 10,
-  year: 2017
 }
 
 const styles = StyleSheet.create({
@@ -49,18 +64,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 16
-  },
-  dummyCell: {
-    flexBasis: `${100 / 7}%`,
-    // height: `${100 / 6}%`,
-    height: (windowHeight - 200)/6
-  },
-  cell: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#e5e5e5',
-    paddingTop: 10,
-    fontSize: 10,
   }
 })
 
-styles.realCell = StyleSheet.flatten([styles.dummyCell, styles.cell])

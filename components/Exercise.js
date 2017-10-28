@@ -1,17 +1,106 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, View, Text, TextInput, ScrollView } from 'react-native'
+import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback, KeyboardAvoidingView, ToastAndroid } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
+import { fromJS } from 'immutable'
 import Set from './Set'
+import ToolbarIcon from './ToolbarIcon'
+import TextField from './TextField'
+
+
+const defaultNewSet = {
+  reps: null,
+  measure: {
+    value: null,
+    units: 'kg'
+  }
+}
 
 export default class Exercise extends PureComponent {
+
+  constructor() {
+    super()
+    const newSet = fromJS(defaultNewSet)
+    this.state = {
+      name: null,
+      sets: [
+        newSet
+      ],
+      errors: {
+        name: false
+      }
+    }
+  }
+
+  addSet = () => {
+    const newSet = this.state.sets.length ?
+      fromJS({
+        reps: (this.state.sets[0].get('reps') !== undefined) ? null : undefined,
+        measure: this.state.sets[0].get('measure') ?
+          {
+            value: null,
+            units: this.state.sets[0].getIn(['measure', 'units'])
+          }
+          :
+          undefined
+      })
+      :
+      fromJS(defaultNewSet)
+    this.setState({
+      sets: [...this.state.sets, newSet]
+    })
+  }
+
+  changeSet = (index, value) => {
+    const newSets = [...this.state.sets]
+    newSets.splice(index, 1, value)
+    this.setState({ sets: newSets })
+  }
+
+  removeSet = (index) => {
+    const newSets = [...this.state.sets]
+    newSets.splice(index, 1)
+    this.setState({ sets: newSets })
+  }
+
+  renderSet = (set, index) => {
+    const showRemoveIcons = (index > 0) ? false : (this.state.sets.length > 1) ? false : true //Show remove icons only if there is one set
+    return (
+      <Set
+        key={index}
+        index={index}
+        set={set}
+        onChange={this.changeSet}
+        onRemove={this.removeSet}
+        showRemoveIcons={showRemoveIcons}
+      />
+    )
+  }
+
+  handleNameChange = (name) => this.setState({ name })
+
+  validateForm = () => {
+    if (!this.state.name) {
+      this.setState({ errors: { name: true } })
+      ToastAndroid.show('Fill in error fields', ToastAndroid.SHORT)
+      return false
+    }
+    return true
+  }
+
+  handleSubmit = () => {
+    if (this.validateForm()) {
+      console.log("done")
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
+
         <View style={styles.toolbar}>
-          <Ionicons
-            name="ios-arrow-back"
-            size={32}
-            style={styles.leftIcon}
+          <ToolbarIcon
+            iconName="md-arrow-back"
+            onPress={() => this.props.navigation.goBack()}
           />
           <Text
             style={styles.title}
@@ -19,39 +108,50 @@ export default class Exercise extends PureComponent {
           >
             Exercise
           </Text>
-          <Ionicons
-            name="md-checkmark"
-            size={32}
-            style={styles.rightIcon}
+          <ToolbarIcon
+            iconName="md-checkmark"
+            onPress={this.handleSubmit}
           />
         </View>
+
         <View style={styles.nameWrapper}>
-          <TextInput
+          <TextField
             placeholder="Name"
+            onChangeText={this.handleNameChange}
             style={styles.textInput}
+            error={this.state.errors.name}
           />
         </View>
-        <ScrollView
-          style={styles.scrollView}
+
+        <Text
+          numberOfLines={1}
+          style={styles.subHeading}
         >
-          <Text
-            numberOfLines={1}
-            style={styles.subHeading}
+          Sets
+        </Text>
+        <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }} keyboardVerticalOffset={0}>
+          <ScrollView
+            style={styles.scrollView}
           >
-            Sets
-          </Text>
-          <Set />
-          <Set />
-          <Set />
-          <View style={styles.addIconWrapper}>
-            <Ionicons
-              name="ios-add-circle-outline"
-              style={styles.addIcon}
-              size={20}
-            />
-          </View>
-        </ScrollView>
+            {
+              this.state.sets.map(this.renderSet)
+            }
+            <TouchableNativeFeedback
+              background={TouchableNativeFeedback.Ripple('#5cb85c')}
+              onPress={this.addSet}
+            >
+              <View style={styles.addIconWrapper}>
+                <Ionicons
+                  name="ios-add-circle-outline"
+                  style={styles.addIcon}
+                  size={20}
+                />
+              </View>
+            </TouchableNativeFeedback>
+          </ScrollView>
+        </KeyboardAvoidingView >
       </View>
+
     )
   }
 }
@@ -73,35 +173,30 @@ const styles = new StyleSheet.create({
     fontSize: 20,
     // color: 'white'
   },
-  leftIcon: {
-    margin: 16,
-    // color: 'white'
-  },
-  rightIcon: {
-    margin: 16,
-    // color: 'white'
-  },
   scrollView: {
-    flex: 1,
-    padding: 16
+    flex: 1
   },
   addIconWrapper: {
-    height: 54,
+    width: 48,
+    height: 48,
+    alignItems: 'center',
     justifyContent: 'center'
   },
   addIcon: {
     color: '#5cb85c'
   },
   textInput: {
-    height: 54,
-    marginBottom: 16
+    height: 54
   },
   nameWrapper: {
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    marginBottom: 16
   },
   subHeading: {
     fontSize: 16,
-    marginBottom: 16,
+    marginLeft: 16,
+    marginTop: 16,
+    fontWeight: "500",
     color: 'grey'
   }
 })

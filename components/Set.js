@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, Text, TextInput, View, Picker } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Picker, TouchableNativeFeedback } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
+import PropTypes from 'prop-types'
+import ImmutablePropTypes from 'react-immutable-proptypes'
+import TextField from './TextField'
 
 const measures = [
   {
@@ -17,6 +20,25 @@ const measures = [
   }
 ]
 
+class IconWrapper extends PureComponent {
+  render() {
+    return (
+      <TouchableNativeFeedback
+        background={TouchableNativeFeedback.Ripple(this.props.nativeFeedbackBackgroundColor)}
+        onPress={this.props.onPress}
+      >
+        <View style={this.props.viewStyle}>
+          <Ionicons
+            name={this.props.iconName}
+            size={this.props.iconSize}
+            style={this.props.iconStlye}
+          />
+        </View>
+      </TouchableNativeFeedback>
+    )
+  }
+}
+
 export default class Set extends PureComponent {
   constructor() {
     super()
@@ -25,86 +47,184 @@ export default class Set extends PureComponent {
 
   renderPickerItem = (item) => <Picker.Item key={item.value} label={item.label} value={item.value} />
 
+  getMeasurePlaceholder = () => {
+    switch (this.props.set.getIn(['measure', 'units'])) {
+      case 'kg':
+        return 'Weight'
+      case 'min':
+        return 'Time'
+      case 'km':
+        return 'Distance'
+    }
+  }
+
+  handleRemove = () => this.props.onRemove(this.props.index)
+
+  handleChange = (path, value) => {
+    const newSet = this.props.set.setIn(path, value)
+    this.props.onChange(this.props.index, newSet)
+  }
+
+  handleRepsChange = (value) => {
+    console.log("handleRepsChange", value)
+    this.handleChange(['reps'], value)
+  }
+
+  handleMeasureValueChange = (value) => {
+    this.handleChange(['measure', 'value'], value)
+  }
+
+  handleMeasureUnitsChange = (value) => {
+    this.handleChange(['measure', 'units'], value)
+  }
+
+  handleRemoveRep = () => {
+    const newSet = this.props.set.delete('reps')
+    this.props.onChange(this.props.index, newSet)
+  }
+
+  handleRemoveMeasure = () => {
+    const newSet = this.props.set.delete('measure')
+    this.props.onChange(this.props.index, newSet)
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Ionicons
-          name="ios-close-circle-outline"
-          style={styles.removeSet}
-          size={20}
+
+        <IconWrapper
+          nativeFeedbackBackgroundColor='#d9534f'
+          onPress={this.handleRemove}
+          viewStyle={styles.removeSet}
+          iconName='ios-close-circle-outline'
+          iconSize={20}
+          iconStlye={styles.removeSetIcon}
         />
-        <View style={styles.repsView}>
-          <TextInput
-            placeholder='Reps'
-            keyboardType="numeric"
-            style={styles.textInput}
-          />
-          <Ionicons
-            name="ios-remove-circle-outline"
-            size={20}
-          />
-        </View>
-        <View style={styles.measureView}>
-          <TextInput
-            placeholder='#'
-            keyboardType="numeric"
-            style={styles.textInput}
-          />
-          <Picker
-            selectedValue={this.state.measure}
-            onValueChange={(itemValue, itemIndex) => this.setState({ measure: itemValue })}
-            mode='dropdown'
-            style={styles.picker}
-          >
-            {
-              measures.map(this.renderPickerItem)
-            }
-          </Picker>
-          <Ionicons
-            name="ios-remove-circle-outline"
-            size={20}
-          />
-        </View>
+
+        {
+          (this.props.set.get('reps') !== undefined) ?
+            <View style={styles.repsView}>
+              <TextField
+                placeholder='Reps'
+                keyboardType="numeric"
+                style={styles.textInput}
+                value={this.props.set.get('reps')}
+                onChangeText={this.handleRepsChange}
+              />
+              {
+                this.props.showRemoveIcons && this.props.set.getIn(['measure', 'units']) ?
+                  <IconWrapper
+                    nativeFeedbackBackgroundColor='#ffcc00'
+                    onPress={this.handleRemoveRep}
+                    viewStyle={styles.removeRep}
+                    iconName="ios-remove-circle-outline"
+                    iconSize={15}
+                    iconStlye={styles.removeRepIcon}
+                  />
+                  :
+                  null
+              }
+            </View>
+            :
+            null
+        }
+        {
+          this.props.set.getIn(['measure', 'units']) ?
+            <View style={styles.measureView}>
+              <TextField
+                placeholder={this.getMeasurePlaceholder()}
+                keyboardType="numeric"
+                style={styles.textInput}
+                value={this.props.set.getIn(['measure', 'value'])}
+                onChangeText={this.handleMeasureValueChange}
+              />
+              <Picker
+                selectedValue={this.props.set.getIn(['measure', 'units'])}
+                mode='dropdown'
+                onValueChange={this.handleMeasureUnitsChange}
+                style={styles.picker}
+              >
+                {
+                  measures.map(this.renderPickerItem)
+                }
+              </Picker>
+              {
+                (this.props.showRemoveIcons && this.props.set.get('reps') !== undefined) ?
+                  <IconWrapper
+                    nativeFeedbackBackgroundColor='#ffcc00'
+                    onPress={this.handleRemoveMeasure}
+                    viewStyle={styles.removeRep}
+                    iconName="ios-remove-circle-outline"
+                    iconSize={15}
+                    iconStlye={styles.removeRepIcon}
+                  />
+                  :
+                  null
+              }
+
+            </View>
+            :
+            null
+        }
       </View>
     )
   }
 }
 
-Set.defaultProps = {
-  number: 1,
-  reps: 15,
-  measure: {
-    value: 10,
-    units: 'kg'
-  }
+Set.propTypes = {
+  index: PropTypes.number,
+  onRemove: PropTypes.func,
+  onChange: PropTypes.func,
+  set: ImmutablePropTypes.mapContains({
+    reps: PropTypes.string,
+    measure: ImmutablePropTypes.mapContains({
+      value: PropTypes.string,
+      units: PropTypes.string
+    })
+  })
 }
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
+    height: 54
   },
   textInput: {
     flex: 1,
-    height: 54,
+    height: '100%',
   },
   picker: {
-    width: 75
+    width: 90
   },
   repsView: {
-    flex: 2,
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 32
+    justifyContent: 'center',
+    // alignItems: 'center',
+    marginRight: 20
   },
   measureView: {
-    flex: 3,
+    flex: 2,
     flexDirection: 'row',
     alignItems: 'center',
   },
   removeSet: {
-    color: '#d9534f',
-    alignSelf: 'center',
-    marginRight: 16
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 48
+  },
+  removeSetIcon: {
+    color: '#d9534f'
+  },
+  removeRep: {
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30
+  },
+  removeRepIcon: {
+    color: '#ffd500'
   }
 })

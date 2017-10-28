@@ -1,43 +1,78 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, ScrollView, TouchableNativeFeedback } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 
 export default class ExerciseRow extends PureComponent {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Ionicons
-          name="ios-close-circle-outline"
-          style={styles.removeExercise}
-          size={20}
-        />
-        <View style={styles.exercise}>
-          <Text style={styles.heading} numberOfLines={1}>
-            Barbell Lift Barbell Lift Barbell Lift Barbell Lift
-          </Text>
-          <ScrollView
-            horizontal={true}
-          >
-            <View style={styles.set}>
-              <Text style={styles.lineOne}>
-                15 Reps
-              </Text>
-              <Text style={styles.lineTwo}>
-                7.5 kg
-              </Text>
-            </View>
-            <View style={styles.arrowIconWrapper}>
-              <Ionicons
-                name="ios-arrow-dropright"
-                size={20}
-              />
-            </View>
-          </ScrollView>
 
-        </View>
+  openExercise = () => this.props.navigation.navigate('Exercise')
+
+  renderSets = (set, index) => {
+    return (
+      <View style={styles.set} key={index}>
+        {
+          set.reps ?
+            <Text style={styles.lineOne}>
+              {`${set.reps} reps`}
+            </Text>
+            :
+            null
+        }
+        {
+          set.measure ?
+            <Text style={styles.lineTwo}>
+              {set.measure}
+            </Text>
+            :
+            null
+        }
       </View>
     )
   }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple('#d9534f')}
+          useForeground
+          onPress={() => null}
+        >
+          <View style={styles.removeExercise}>
+            <Ionicons
+              name="ios-close-circle-outline"
+              size={20}
+              style={styles.removeExerciseIcon}
+            />
+          </View>
+        </TouchableNativeFeedback>
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple('#cccccc')}
+          onPress={this.openExercise}
+        >
+          <View style={styles.exercise}>
+            <Text style={styles.heading} numberOfLines={1}>
+              {this.props.name}
+            </Text>
+            <ScrollView
+              horizontal={true}
+            >
+              {
+                this.props.sets.map(this.renderSets)
+              }
+              <View style={styles.arrowIconWrapper}>
+                <Ionicons
+                  name="ios-arrow-dropright"
+                  size={20}
+                />
+              </View>
+            </ScrollView>
+
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+    )
+  }
+
 }
 
 const styles = StyleSheet.create({
@@ -49,8 +84,13 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   removeExercise: {
-    color: '#d9534f',
-    marginRight: 16
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 48
+  },
+  removeExerciseIcon: {
+    color: '#d9534f'
   },
   exercise: {
     flex: 1,

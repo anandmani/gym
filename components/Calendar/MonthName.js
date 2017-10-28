@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { getMonthName } from '../utils'
+import { getMonthName } from '../../utils'
 import DaysOfWeek from './DaysOfWeek'
 
 export default class MonthName extends PureComponent {

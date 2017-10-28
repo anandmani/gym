@@ -1,18 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableNativeFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ToolbarIcon from '../ToolbarIcon'
 import Month from './Month'
 import MonthName from './MonthName'
 
 export default class App extends React.Component {
+  openDrawer = () => this.props.navigation.navigate('DrawerToggle')
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.toolbar}>
-          <Ionicons
-            name="md-menu"
-            size={32}
-            style={styles.leftIcon}
+          <ToolbarIcon 
+            onPress={this.openDrawer}
           />
           <Text
             style={styles.title}
@@ -26,19 +26,15 @@ export default class App extends React.Component {
           style={styles.months}
         >
           <MonthName
-            month={9}
-          />
-          <Month
-            month={9}
-            year={2017}
-          />
-          <MonthName
             month={10}
           />
           <Month
             month={10}
             year={2017}
+            navigation={this.props.navigation}
           />
+          {
+            /*
           <MonthName
             month={11}
           />
@@ -46,9 +42,11 @@ export default class App extends React.Component {
             month={11}
             year={2017}
           />
+            */
+          }
         </ScrollView>
 
-      </View>
+      </View >
     );
   }
 }

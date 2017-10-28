@@ -1,0 +1,145 @@
+{
+  "10-2017": {
+    "25-10-2017": "Arms",
+    "24-10-2017": "Back"
+  },
+  "25-10-2017": {
+    "name": "Arms",
+    "exercises": [
+      {
+        "name": "Bicep Curls",
+        "sets": [
+          {
+            "reps": 15,
+            "measure": {
+              "val": 5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 12,
+            "measure": {
+              "val": 7.5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 10,
+            "measure": {
+              "val": 10,
+              "units": "kg"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Tricep Curls",
+        "sets": [
+          {
+            "reps": 15,
+            "measure": {
+              "val": 5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 12,
+            "measure": {
+              "val": 7.5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 10,
+            "measure": {
+              "val": 10,
+              "units": "kg"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "24-10-2017": {
+    "name": "Back",
+    "exercises": [
+      {
+        "name": "running",
+        "sets": [
+          {
+            "measure": {
+              "val": 5,
+              "units": "min"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Pushups",
+        "sets": [
+          {
+            "reps": 15
+          },
+          {
+            "reps": 12
+          },
+          {
+            "reps": 10
+          }
+        ]
+      },
+      {
+        "name": "Front Lat Pulldown",
+        "sets": [
+          {
+            "reps": 15,
+            "measure": {
+              "val": 5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 12,
+            "measure": {
+              "val": 7.5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 10,
+            "measure": {
+              "val": 10,
+              "units": "kg"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Rear Lat Pulldown",
+        "sets": [
+          {
+            "reps": 15,
+            "measure": {
+              "val": 5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 12,
+            "measure": {
+              "val": 7.5,
+              "units": "kg"
+            }
+          },
+          {
+            "reps": 10,
+            "measure": {
+              "val": 10,
+              "units": "kg"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

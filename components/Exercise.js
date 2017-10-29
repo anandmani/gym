@@ -6,6 +6,10 @@ import Set from './Set'
 import ToolbarIcon from './ToolbarIcon'
 import TextField from './TextField'
 
+const modes = {
+  edit: 'EDIT',
+  new: 'NEW'
+}
 
 const defaultNewSet = {
   reps: null,
@@ -17,60 +21,79 @@ const defaultNewSet = {
 
 export default class Exercise extends PureComponent {
 
-  constructor() {
-    super()
-    const newSet = fromJS(defaultNewSet)
+  constructor(props) {
+    super(props)
+    this.checkMode(props)
+    this.mode === modes.edit ? this.initEdit() : this.initNew()
+    this.nameInput
+  }
+
+  checkMode = (props) => {
+    if (props.navigation.state.params && props.navigation.state.params.name) {
+      this.mode = modes.edit
+      this.name = this.props.navigation.state.params.name
+      this.sets = this.props.navigation.state.params.sets
+    }
+    else {
+      this.mode = modes.new
+    }
+  }
+
+  initEdit = () => {
     this.state = {
-      name: null,
-      sets: [
-        newSet
-      ],
+      name: this.name,
+      sets: fromJS(this.sets),
       errors: {
         name: false
       }
     }
-    this.nameInput
+  }
+
+  initNew = () => {
+    this.state = {
+      name: null,
+      sets: fromJS([defaultNewSet]),
+      errors: {
+        name: false
+      }
+    }
   }
 
   focusNameInput = () => this.nameInput.focus()
 
   componentDidMount() {
-    setTimeout(this.focusNameInput)
+    if (this.mode === modes.new) {
+      setTimeout(this.focusNameInput)
+    }
   }
 
   addSet = () => {
-    const newSet = this.state.sets.length ?
+    const newSet = this.state.sets.size ?
       fromJS({
-        reps: (this.state.sets[0].get('reps') !== undefined) ? null : undefined,
-        measure: this.state.sets[0].get('measure') ?
+        reps: (this.state.sets.getIn([0, 'reps']) !== undefined) ? null : undefined,
+        measure: this.state.sets.getIn([0, 'measure']) ?
           {
             value: null,
-            units: this.state.sets[0].getIn(['measure', 'units'])
+            units: this.state.sets.getIn([0, 'measure', 'units'])
           }
           :
           undefined
       })
       :
       fromJS(defaultNewSet)
-    this.setState({
-      sets: [...this.state.sets, newSet]
-    })
+    this.setState({ sets: this.state.sets.push(newSet) })
   }
 
   changeSet = (index, value) => {
-    const newSets = [...this.state.sets]
-    newSets.splice(index, 1, value)
-    this.setState({ sets: newSets })
+    this.setState({ sets: this.state.sets.set(index, value) })
   }
 
   removeSet = (index) => {
-    const newSets = [...this.state.sets]
-    newSets.splice(index, 1)
-    this.setState({ sets: newSets })
+    this.setState({ sets: this.state.sets.delete(index) })
   }
 
   renderSet = (set, index) => {
-    const showRemoveIcons = (index > 0) ? false : (this.state.sets.length > 1) ? false : true //Show remove icons only if there is one set
+    const showRemoveIcons = (index > 0) ? false : (this.state.sets.size > 1) ? false : true //Show remove icons only if there is one set
     return (
       <Set
         key={index}
@@ -98,7 +121,7 @@ export default class Exercise extends PureComponent {
     if (this.validateForm()) {
       const { onSave, index } = this.props.navigation.state.params
       const { name, sets } = this.state
-      sets = sets.map(set => set.toJS())
+      sets = sets.toJS()
       onSave(index, { name, sets })
       this.props.navigation.goBack()
     }
@@ -128,8 +151,10 @@ export default class Exercise extends PureComponent {
         <View style={styles.nameWrapper}>
           <TextField
             placeholder="Name"
+            value={this.state.name}
             onChangeText={this.handleNameChange}
             style={styles.textInput}
+            autoCapitalize='characters'
             error={this.state.errors.name}
             refCallback={(element) => this.nameInput = element}
             selectTextOnFocus
@@ -199,7 +224,8 @@ const styles = new StyleSheet.create({
     color: '#5cb85c'
   },
   textInput: {
-    height: 54
+    height: 54,
+    fontSize: 18,
   },
   nameWrapper: {
     paddingHorizontal: 16,

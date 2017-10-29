@@ -28,6 +28,16 @@ export default class Month extends PureComponent {
 
   generateDbKey = (day, month, year) => `${day}-${month}-${year}`
 
+  renderDay = (item, index) => (
+    <Day
+      key={index}
+      day={index + 1}
+      dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
+      workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
+      navigation={this.props.navigation}
+    />
+  )
+
   render() {
     return (
       <View style={styles.container}>
@@ -38,15 +48,7 @@ export default class Month extends PureComponent {
             ))
           }
           {
-            Array(this.numberOfCells).fill().map((item, index) => (
-              <Day
-                key={index}
-                day={index + 1}
-                dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
-                workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
-                navigation={this.props.navigation}
-              />
-            ))
+            Array(this.numberOfCells).fill().map(this.renderDay)
           }
         </View>
       </View>

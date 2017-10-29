@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback,
 import { Ionicons } from '@expo/vector-icons';
 import ExerciseRow from './ExerciseRow'
 import ToolbarIcon from './ToolbarIcon'
+import TextField from './TextField'
 
 export default class Workout extends PureComponent {
 
@@ -12,8 +13,12 @@ export default class Workout extends PureComponent {
     this.state = {
       name: null,
       exercises: [],
-      loading: this.dbKey ? true : false
+      loading: this.dbKey ? true : false,
+      errors: {
+        name: null
+      }
     }
+    this.nameInput
   }
 
   getWorkout = async (dbKey) => {
@@ -21,26 +26,40 @@ export default class Workout extends PureComponent {
     return AsyncStorage.getItem(dbKey)
   }
 
+  focusNameInput = () => this.nameInput.focus()
+
   componentDidMount() {
     if (this.dbKey) {
       this.getWorkout(this.dbKey)
         .then(workout => {
-          workout = JSON.parse(workout)
+          const { name, exercises } = JSON.parse(workout)
           this.setState({
-            workout,
+            name,
+            exercises,
             loading: false
           })
         })
     }
+    else {
+      setTimeout(this.focusNameInput)
+    }
   }
 
-  renderExerciseRow = (exercise) => {
+  removeExercise = (index) => {
+    const newExercises = [...this.state.exercises]
+    newExercises.splice(index, 1)
+    this.setState({ exercises: newExercises })
+  }
+
+  renderExerciseRow = (exercise, index) => {
     const { name, sets } = exercise
     return (
       <ExerciseRow
-        key={name}
+        key={index}
+        index={index}
         name={name}
         sets={sets}
+        onRemove={this.removeExercise}
         navigation={this.props.navigation}
       />
     )
@@ -58,6 +77,8 @@ export default class Workout extends PureComponent {
       onSave: this.saveExercise
     })
   }
+
+  handleNameChange = (name) => this.setState({ name })
 
   render() {
     return (
@@ -79,11 +100,14 @@ export default class Workout extends PureComponent {
           />
         </View>
         <View style={styles.nameWrapper}>
-          <TextInput
+          <TextField
             placeholder="Name"
             style={styles.textInput}
             value={this.state.name}
-
+            onChangeText={this.handleNameChange}
+            autoCapitalize='characters'
+            error={this.state.errors.name}
+            refCallback={element => this.nameInput = element}
           />
         </View>
         <Text
@@ -172,6 +196,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 54,
+    fontSize: 18,
     marginBottom: 16
   },
   subHeading: {

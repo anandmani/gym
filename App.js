@@ -28,14 +28,14 @@ import sampleData from './sampleData.json'
 
 const NavContainer = StackNavigator(
   {
+    Calendar: {
+      screen: Calendar
+    },
     Workout: {
       screen: Workout
     },
     Exercise: {
       screen: Exercise
-    },
-    Calendar: {
-      screen: Calendar
     },
     Compare: {
       screen: Compare
@@ -60,8 +60,8 @@ export default class App extends PureComponent {
     //   "24-10-2017": "Back"
     // }
     // AsyncStorage.setItem("10-2017", JSON.stringify(val))
-    AsyncStorage.setItem("25-10-2017", JSON.stringify(sampleData["25-10-2017"]))
-    AsyncStorage.setItem("24-10-2017", JSON.stringify(sampleData["24-10-2017"]))
+    // AsyncStorage.setItem("25-10-2017", JSON.stringify(sampleData["25-10-2017"]))
+    // AsyncStorage.setItem("24-10-2017", JSON.stringify(sampleData["24-10-2017"]))
   }
   render() {
     return (

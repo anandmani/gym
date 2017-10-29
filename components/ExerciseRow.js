@@ -4,7 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default class ExerciseRow extends PureComponent {
 
-  openExercise = () => this.props.navigation.navigate('Exercise')
+  openExercise = () => this.props.navigation.navigate('Exercise', {
+    name: this.props.name,
+    sets: this.props.sets
+  })
 
   renderSets = (set, index) => {
     return (
@@ -29,14 +32,15 @@ export default class ExerciseRow extends PureComponent {
     )
   }
 
+  handleRemove = () => this.props.onRemove(this.props.index)
+
   render() {
-    console.log("this.props", this.props)
     return (
       <View style={styles.container}>
         <TouchableNativeFeedback
           background={TouchableNativeFeedback.Ripple('#d9534f')}
           useForeground
-          onPress={() => null}
+          onPress={this.handleRemove}
         >
           <View style={styles.removeExercise}>
             <Ionicons

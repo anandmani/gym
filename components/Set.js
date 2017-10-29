@@ -66,11 +66,12 @@ export default class Set extends PureComponent {
   }
 
   handleRepsChange = (value) => {
-    console.log("handleRepsChange", value)
+    value = Number(value)
     this.handleChange(['reps'], value)
   }
 
   handleMeasureValueChange = (value) => {
+    value = Number(value)
     this.handleChange(['measure', 'value'], value)
   }
 
@@ -108,7 +109,9 @@ export default class Set extends PureComponent {
                 placeholder='Reps'
                 keyboardType="numeric"
                 style={styles.textInput}
-                value={this.props.set.get('reps')}
+                value={
+                  this.props.set.get('reps') ? String(this.props.set.get('reps')) : null
+                }
                 onChangeText={this.handleRepsChange}
                 selectTextOnFocus
               />
@@ -136,7 +139,9 @@ export default class Set extends PureComponent {
                 placeholder={this.getMeasurePlaceholder()}
                 keyboardType="numeric"
                 style={styles.textInput}
-                value={this.props.set.getIn(['measure', 'value'])}
+                value={
+                  this.props.set.getIn(['measure', 'value']) ? String(this.props.set.getIn(['measure', 'value'])) : null
+                }
                 onChangeText={this.handleMeasureValueChange}
                 selectTextOnFocus
               />
@@ -178,9 +183,9 @@ Set.propTypes = {
   onRemove: PropTypes.func,
   onChange: PropTypes.func,
   set: ImmutablePropTypes.mapContains({
-    reps: PropTypes.string,
+    reps: PropTypes.number,
     measure: ImmutablePropTypes.mapContains({
-      value: PropTypes.string,
+      value: PropTypes.number,
       units: PropTypes.string
     })
   })

@@ -12,21 +12,21 @@
           {
             "reps": 15,
             "measure": {
-              "val": 5,
+              "value": 5,
               "units": "kg"
             }
           },
           {
             "reps": 12,
             "measure": {
-              "val": 7.5,
+              "value": 7.5,
               "units": "kg"
             }
           },
           {
             "reps": 10,
             "measure": {
-              "val": 10,
+              "value": 10,
               "units": "kg"
             }
           }
@@ -38,21 +38,21 @@
           {
             "reps": 15,
             "measure": {
-              "val": 5,
+              "value": 5,
               "units": "kg"
             }
           },
           {
             "reps": 12,
             "measure": {
-              "val": 7.5,
+              "value": 7.5,
               "units": "kg"
             }
           },
           {
             "reps": 10,
             "measure": {
-              "val": 10,
+              "value": 10,
               "units": "kg"
             }
           }
@@ -68,7 +68,7 @@
         "sets": [
           {
             "measure": {
-              "val": 5,
+              "value": 5,
               "units": "min"
             }
           }
@@ -94,21 +94,21 @@
           {
             "reps": 15,
             "measure": {
-              "val": 5,
+              "value": 5,
               "units": "kg"
             }
           },
           {
             "reps": 12,
             "measure": {
-              "val": 7.5,
+              "value": 7.5,
               "units": "kg"
             }
           },
           {
             "reps": 10,
             "measure": {
-              "val": 10,
+              "value": 10,
               "units": "kg"
             }
           }
@@ -120,21 +120,21 @@
           {
             "reps": 15,
             "measure": {
-              "val": 5,
+              "value": 5,
               "units": "kg"
             }
           },
           {
             "reps": 12,
             "measure": {
-              "val": 7.5,
+              "value": 7.5,
               "units": "kg"
             }
           },
           {
             "reps": 10,
             "measure": {
-              "val": 10,
+              "value": 10,
               "units": "kg"
             }
           }

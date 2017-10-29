@@ -1,19 +1,22 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback, Button, AsyncStorage, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback, Button, AsyncStorage, ActivityIndicator, ToastAndroid } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import ExerciseRow from './ExerciseRow'
 import ToolbarIcon from './ToolbarIcon'
 import TextField from './TextField'
+import { modes } from '../utils'
 
 export default class Workout extends PureComponent {
 
   constructor(props) {
     super(props)
-    this.dbKey = this.props.navigation.state.params && this.props.navigation.state.params.dbKey
+    this.dbKey = this.props.navigation.state.params.dbKey
+    this.mode = this.props.navigation.state.params.mode
+    this.onSubmit = this.props.navigation.state.params.onSubmit
     this.state = {
       name: null,
       exercises: [],
-      loading: this.dbKey ? true : false,
+      loading: this.mode === modes.edit ? true : false,
       errors: {
         name: null
       }
@@ -21,24 +24,48 @@ export default class Workout extends PureComponent {
     this.nameInput
   }
 
-  getWorkout = async (dbKey) => {
-    console.log("getWorkout", dbKey)
-    return AsyncStorage.getItem(dbKey)
+  getWorkout = async () => {
+    try {
+      const workout = await AsyncStorage.getItem(this.dbKey)
+      if (workout !== null) {
+        const { name, exercises } = JSON.parse(workout)
+        this.setState({
+          name,
+          exercises,
+          loading: false
+        })
+      }
+    } catch (error) {
+      ToastAndroid.show('Failed to fetch workout', ToastAndroid.SHORT)
+    }
+  }
+
+  getMonthDbKey = (dbKey) => {
+    const temp = dbKey.split('-')
+    temp.splice(0, 1)
+    return temp.join('-')
+  }
+
+  saveWorkout = async () => {
+    const monthDbKey = this.getMonthDbKey(this.dbKey)
+    const monthValue = JSON.stringify({ [this.dbKey]: this.state.name })
+    const monthData = [monthDbKey, monthValue]
+    const { name, exercises } = this.state
+    const dayValue = JSON.stringify({ name, exercises })
+    const dayData = [this.dbKey, dayValue]
+    try {
+      await AsyncStorage.multiMerge([monthData, dayData])
+      this.props.navigation.goBack()
+    } catch (error) {
+      ToastAndroid.show('Failed to save workout', ToastAndroid.SHORT)
+    }
   }
 
   focusNameInput = () => this.nameInput.focus()
 
   componentDidMount() {
-    if (this.dbKey) {
-      this.getWorkout(this.dbKey)
-        .then(workout => {
-          const { name, exercises } = JSON.parse(workout)
-          this.setState({
-            name,
-            exercises,
-            loading: false
-          })
-        })
+    if (this.mode === modes.edit) {
+      this.getWorkout()
     }
     else {
       setTimeout(this.focusNameInput)
@@ -78,7 +105,25 @@ export default class Workout extends PureComponent {
     })
   }
 
-  handleNameChange = (name) => this.setState({ name })
+  handleNameChange = (name) => this.setState({ name: name.trim() })
+
+  validateForm = () => {
+    if (!this.state.name) {
+      this.setState({ errors: { name: true } })
+      ToastAndroid.show('Fill in error fields', ToastAndroid.SHORT)
+      return false
+    }
+    return true
+  }
+
+  handleSubmit = () => {
+    if (this.validateForm()) {
+      this.saveWorkout()
+      this.onSubmit()
+    }
+  }
+
+  goBack = () => this.props.navigation.goBack()
 
   render() {
     return (
@@ -86,7 +131,7 @@ export default class Workout extends PureComponent {
         <View style={styles.toolbar}>
           <ToolbarIcon
             iconName="md-arrow-back"
-            onPress={() => this.props.navigation.goBack()}
+            onPress={this.goBack}
           />
           <Text
             style={styles.title}
@@ -96,7 +141,7 @@ export default class Workout extends PureComponent {
           </Text>
           <ToolbarIcon
             iconName="md-checkmark"
-            onPress={() => null}
+            onPress={this.handleSubmit}
           />
         </View>
         <View style={styles.nameWrapper}>
@@ -105,7 +150,7 @@ export default class Workout extends PureComponent {
             style={styles.textInput}
             value={this.state.name}
             onChangeText={this.handleNameChange}
-            autoCapitalize='characters'
+            autoCapitalize='words'
             error={this.state.errors.name}
             refCallback={element => this.nameInput = element}
           />

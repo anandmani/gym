@@ -35,6 +35,7 @@ export default class Month extends PureComponent {
       dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
       workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
       navigation={this.props.navigation}
+      onWorkoutSubmit={this.props.onWorkoutSubmit}
     />
   )
 

@@ -5,11 +5,7 @@ import { fromJS } from 'immutable'
 import Set from './Set'
 import ToolbarIcon from './ToolbarIcon'
 import TextField from './TextField'
-
-const modes = {
-  edit: 'EDIT',
-  new: 'NEW'
-}
+import {modes} from '../utils'
 
 const defaultNewSet = {
   reps: null,
@@ -106,7 +102,7 @@ export default class Exercise extends PureComponent {
     )
   }
 
-  handleNameChange = (name) => this.setState({ name })
+  handleNameChange = (name) => this.setState({ name: name.trim() })
 
   validateForm = () => {
     if (!this.state.name) {
@@ -127,6 +123,8 @@ export default class Exercise extends PureComponent {
     }
   }
 
+  goBack = () => this.props.navigation.goBack()
+
   render() {
     return (
       <View style={styles.container}>
@@ -134,7 +132,7 @@ export default class Exercise extends PureComponent {
         <View style={styles.toolbar}>
           <ToolbarIcon
             iconName="md-arrow-back"
-            onPress={() => this.props.navigation.goBack()}
+            onPress={this.goBack}
           />
           <Text
             style={styles.title}
@@ -154,7 +152,7 @@ export default class Exercise extends PureComponent {
             value={this.state.name}
             onChangeText={this.handleNameChange}
             style={styles.textInput}
-            autoCapitalize='characters'
+            autoCapitalize='words'
             error={this.state.errors.name}
             refCallback={(element) => this.nameInput = element}
             selectTextOnFocus

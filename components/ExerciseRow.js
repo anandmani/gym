@@ -50,11 +50,11 @@ export default class ExerciseRow extends PureComponent {
             />
           </View>
         </TouchableNativeFeedback>
-        <View style={styles.exercise}>
-          <TouchableNativeFeedback
-            background={TouchableNativeFeedback.Ripple('#cccccc')}
-            onPress={this.openExercise}
-          >
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple('#cccccc')}
+          onPress={this.openExercise}
+        >
+          <View style={styles.exercise}>
             <View style={styles.headingView}>
               <Text style={styles.heading} numberOfLines={1}>
                 {this.props.name}
@@ -66,18 +66,15 @@ export default class ExerciseRow extends PureComponent {
                 />
               </View>
             </View>
-          </TouchableNativeFeedback>
-          <ScrollView
-            horizontal={true}
-            style={styles.sets}
-          >
-            {
-              this.props.sets.map(this.renderSets)
-            }
-          </ScrollView>
-
-        </View>
-
+            <View
+              style={styles.sets}
+            >
+              {
+                this.props.sets.map(this.renderSets)
+              }
+            </View>
+          </View>
+        </TouchableNativeFeedback>
       </View>
     )
   }
@@ -88,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    height: 76,
+    minHeight: 76,
     alignItems: 'center',
     marginBottom: 16
   },
@@ -115,11 +112,16 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   sets: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 5
   },
   set: {
-    width: 50,
+    width: 60,
+    padding: 5,
     marginRight: 5,
+    marginBottom: 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,

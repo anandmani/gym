@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableNativeFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ToolbarIcon from '../ToolbarIcon'
 import Month from './Month'
 import MonthName from './MonthName'
 
-export default class App extends React.Component {
-  openDrawer = () => this.props.navigation.navigate('DrawerToggle')
+export default class Calendar extends PureComponent {
+
+  constructor(){
+    super()
+    // this.today = new Date
+  }
+
+  openDrawer = () => {
+    this.props.navigation.navigate('DrawerToggle')
+  }
+
+  onWorkoutSubmit = () => {
+    setTimeout(() => this.forceUpdate())
+  }
+
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.toolbar}>
-          <ToolbarIcon 
+          <ToolbarIcon
             onPress={this.openDrawer}
           />
           <Text
@@ -32,6 +46,7 @@ export default class App extends React.Component {
             month={10}
             year={2017}
             navigation={this.props.navigation}
+            onWorkoutSubmit={this.onWorkoutSubmit}
           />
           {
             /*
@@ -49,6 +64,7 @@ export default class App extends React.Component {
       </View >
     );
   }
+
 }
 
 const styles = StyleSheet.create({

@@ -1,16 +1,20 @@
 import React, { PureComponent } from 'react'
 import { View, Text, TouchableNativeFeedback, StyleSheet, Dimensions } from 'react-native'
 import ExerciseLabel from './ExerciseLabel'
-
+import { modes } from '../../utils'
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 export default class Day extends PureComponent {
 
   openWorkout = () => {
+    const defaultProps = {
+      dbKey: this.props.dbKey,
+      onSubmit: this.props.onWorkoutSubmit
+    }
     this.props.workout ?
-      this.props.navigation.navigate('Workout', { dbKey: this.props.dbKey })
+      this.props.navigation.navigate('Workout', { ...defaultProps, mode: modes.edit })
       :
-      this.props.navigation.navigate('Workout', { dbKey: null }) //need to specify dbKey = null as it merges with existing params
+      this.props.navigation.navigate('Workout', { ...defaultProps, mode: modes.new })
   }
 
   render() {
@@ -20,7 +24,7 @@ export default class Day extends PureComponent {
         onPress={this.openWorkout}
       >
         <View style={styles.realCell}>
-          <Text style={styles.fs10}>
+          <Text style={styles.today}>
             {this.props.day}
           </Text>
           {
@@ -51,6 +55,10 @@ const styles = StyleSheet.create({
   },
   fs10: {
     fontSize: 10,
+  },
+  today: {
+    fontSize: 12,
+    color: 'blue'
   }
 })
 

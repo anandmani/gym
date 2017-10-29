@@ -2,6 +2,11 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
+export const modes = {
+  edit: 'EDIT',
+  new: 'NEW'
+}
+
 //In Date, month is 0 based
 export function daysInMonth(month, year) {
   return new Date(year, month, 0).getDate(); //not month - 1, because we need to get -1th date of next month

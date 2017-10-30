@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react'
-import { StyleSheet, View, Text, AsyncStorage } from 'react-native'
+import { StyleSheet, View, Text, AsyncStorage, Dimensions } from 'react-native'
 import { daysInMonth, getDay } from '../../utils'
 import Day from './Day'
 import { getMonthName } from '../../utils'
+const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 
 const today = new Date()
 
@@ -29,17 +30,29 @@ export default class Month extends PureComponent {
 
   generateDbKey = (day, month, year) => `${day}-${month}-${year}`
 
-  renderDay = (item, index) => (
-    <Day
-      key={index}
-      day={index + 1}
-      dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
-      workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
-      navigation={this.props.navigation}
-      onWorkoutSubmit={this.props.onWorkoutSubmit}
-      today={this.props.today === index + 1}
-    />
-  )
+  renderDay = (item, index) => {
+    const conditionalProps = {}
+    if (this.props.today && this.props.today === index + 1) {
+      conditionalProps.today = true
+    }
+    if (this.props.selectedDay && this.props.selectedDay === index + 1) {
+      conditionalProps.selected = true
+    }
+    return (
+      <Day
+        key={index}
+        day={index + 1}
+        dbKey={this.generateDbKey(index + 1, this.props.month, this.props.year)}
+        workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
+        navigation={this.props.navigation}
+        onWorkoutSubmit={this.props.onWorkoutSubmit}
+        onPress={this.props.onDayPress}
+        onLongPress={this.props.onDayLongPress}
+        {...conditionalProps}
+      />
+    )
+  }
+
 
   render() {
     return (
@@ -68,6 +81,10 @@ export default class Month extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 5
+  },
+  dummyCell: {
+    flexBasis: `${100 / 7}%`,
+    height: (windowHeight - 200) / 6
   },
   grid: {
     flex: 1,

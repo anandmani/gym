@@ -1,20 +1,33 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, TouchableNativeFeedback, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TouchableNativeFeedback, FlatList, Vibration, BackHandler, ToastAndroid } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ToolbarIcon from '../ToolbarIcon'
 import Month from './Month'
-import MonthName from './MonthName'
 import { getPreviousMonth, getNextMonth } from '../../utils'
 import DaysOfWeek from './DaysOfWeek'
+
+export const workoutColors = {
+}
 
 export default class Calendar extends PureComponent {
 
   constructor() {
     super()
     this.today = new Date
+    this.compareDates = []
     this.state = {
-      months: this.getInitialMonths()
+      months: this.getInitialMonths(),
+      compare: false
     }
+    BackHandler.addEventListener('hardwareBackPress', this.backHandler)
+  }
+
+  backHandler = () => {
+    if (this.state.compare) {
+      this.resetCompare()
+      return true //don't exec default
+    }
+    return false
   }
 
   getInitialMonths = () => {
@@ -38,8 +51,7 @@ export default class Calendar extends PureComponent {
   }
 
   openDrawer = () => {
-    // this.props.navigation.navigate('DrawerToggle')
-    this.list.scrollToEnd()
+    this.props.navigation.navigate('DrawerToggle')
   }
 
   onWorkoutSubmit = () => {
@@ -52,19 +64,59 @@ export default class Calendar extends PureComponent {
     index: 0
   })
 
+  startCompare = (dbKey) => {
+    Vibration.vibrate(100)
+    this.compareDates.push(dbKey)
+    this.setState({ compare: true })
+  }
+
+  checkCompareComplete = ({ dbKey, hasWorkout }) => {
+    if (hasWorkout) {
+      this.resetCompare()
+      this.props.navigation.navigate('Compare')
+    }
+    else {
+      ToastAndroid.show("Choose a day with a workout", ToastAndroid.SHORT)
+    }
+  }
+
+  handleDayPress = (arg) => {
+    if (this.state.compare) {
+      this.checkCompareComplete(arg)
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  resetCompare = () => {
+    this.compareDates = []
+    this.setState({ compare: false })
+  }
+
   renderMonth = ({ item, index }) => {  //notice {item, index}
+    const conditionalProps = {}
+    if (this.compareDates[0]) {
+      console.log(this.state.compare, Number(this.compareDates[0].split('-')[1]), index)
+    }
+    if (index === 0) {
+      conditionalProps.today = this.today.getDate()
+    }
+    if (this.state.compare && Number(this.compareDates[0].split('-')[1]) === item.month) {
+      conditionalProps.selectedDay = Number(this.compareDates[0].split('-')[0])
+      console.log("sle", conditionalProps.selectedDay)
+    }
     return (
       <View>
-        {/* <MonthName
-          month={item.month}
-          year={item.year}
-        /> */}
         <Month
           month={item.month}
           year={item.year}
           navigation={this.props.navigation}
           onWorkoutSubmit={this.onWorkoutSubmit}
-          today={index === 0 ? this.today.getDate() : null}
+          onDayPress={this.handleDayPress}
+          onDayLongPress={this.startCompare}
+          {...conditionalProps}
         />
       </View>
     )
@@ -81,8 +133,22 @@ export default class Calendar extends PureComponent {
             style={styles.title}
             numberOfLines={1}
           >
-            Calendar
+            {
+              this.state.compare ?
+                "Compare to"
+                :
+                "Calendar"
+            }
           </Text>
+          {
+            this.state.compare ?
+              <ToolbarIcon
+                iconName="md-close"
+                onPress={this.resetCompare}
+              />
+              :
+              null
+          }
           <ToolbarIcon
             iconName="md-arrow-down"
             onPress={this.scrollToToday}
@@ -93,6 +159,7 @@ export default class Calendar extends PureComponent {
         />
         <FlatList
           data={this.state.months}
+          extraData={this.state.compare}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderMonth}
           ref={element => this.list = element}

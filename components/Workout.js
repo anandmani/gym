@@ -61,6 +61,32 @@ export default class Workout extends PureComponent {
     }
   }
 
+  deleteWorkout = () => {
+    return AsyncStorage.removeItem(this.dbKey)
+  }
+
+  deleteWorkoutName = async () => {
+    //Cant delete deeply nested key, therefore we fetch the parent object, change the child key and save back parent object
+    const monthDbKey = this.getMonthDbKey(this.dbKey)
+    try {
+      const monthObject = JSON.parse(await AsyncStorage.getItem(monthDbKey))
+      delete monthObject[this.dbKey]
+      return AsyncStorage.setItem(monthDbKey, JSON.stringify(monthObject))
+    } catch (error) {
+      ToastAndroid.show('Failed to workout data (1)', ToastAndroid.SHORT)
+      return null
+    }
+  }
+
+  handleDelete = async () => {
+    try {
+      await Promise.all([this.deleteWorkoutName(), this.deleteWorkout()])
+      this.props.navigation.goBack()
+    } catch (error) {
+      ToastAndroid.show('Failed to workout data (2)', ToastAndroid.SHORT)
+    }
+  }
+
   focusNameInput = () => this.nameInput.focus()
 
   componentDidMount() {
@@ -139,6 +165,15 @@ export default class Workout extends PureComponent {
           >
             Workout
           </Text>
+          {
+            this.mode === modes.edit ?
+              <ToolbarIcon
+                iconName="md-trash"
+                onPress={this.handleDelete}
+              />
+              :
+              null
+          }
           <ToolbarIcon
             iconName="md-checkmark"
             onPress={this.handleSubmit}

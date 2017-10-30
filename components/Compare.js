@@ -22,8 +22,8 @@ export default class Compare extends PureComponent {
           </Text>
         </View>
         <ScrollView>
-          <LineGraph />
-          <BarGraph />
+          {/* <LineGraph /> */}
+          {/* <BarGraph /> */}
           <View style={styles.pseudoScrollView} />
         </ScrollView>
       </View>

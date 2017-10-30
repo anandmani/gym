@@ -5,6 +5,7 @@ import ToolbarIcon from '../ToolbarIcon'
 import Month from './Month'
 import MonthName from './MonthName'
 import { getPreviousMonth, getNextMonth } from '../../utils'
+import DaysOfWeek from './DaysOfWeek'
 
 export default class Calendar extends PureComponent {
 
@@ -54,10 +55,10 @@ export default class Calendar extends PureComponent {
   renderMonth = ({ item, index }) => {  //notice {item, index}
     return (
       <View>
-        <MonthName
+        {/* <MonthName
           month={item.month}
           year={item.year}
-        />
+        /> */}
         <Month
           month={item.month}
           year={item.year}
@@ -87,6 +88,9 @@ export default class Calendar extends PureComponent {
             onPress={this.scrollToToday}
           />
         </View>
+        <DaysOfWeek
+          today={this.today.getDay()}
+        />
         <FlatList
           data={this.state.months}
           keyExtractor={this.keyExtractor}
@@ -94,6 +98,9 @@ export default class Calendar extends PureComponent {
           ref={element => this.list = element}
           onEndReached={this.addPrevMonth}
           inverted
+        />
+        <DaysOfWeek
+          today={this.today.getDay()}
         />
       </View >
     );
@@ -109,7 +116,8 @@ const styles = StyleSheet.create({
     height: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: '#ff7faa',
+    backgroundColor: 'white', //elevation doesnt work without background color for some reason
+    // elevation: 5,
   },
   title: {
     flex: 1,

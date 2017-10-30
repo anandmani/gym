@@ -11,7 +11,7 @@ class DaysOfWeek extends PureComponent {
           days.map((day, index) => (
             <Text
               key={index}
-              style={styles.day}
+              style={this.props.today === index ? styles.today : styles.day}
             >
               {day}
             </Text>
@@ -26,14 +26,23 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     height: 20,
-    paddingHorizontal: 16
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: '#f6f6f6'
+    // elevation: 1
   },
   day: {
     flex: 1,
-    fontSize: 10,
+    fontSize: 8,
     // fontWeight: 'bold',
-    color: 'grey'
+    color: 'grey',
+    paddingLeft: 4
+  },
+  blue: {
+    color: '#4ca6ff'
   }
 })
+
+styles.today = StyleSheet.flatten([styles.day, styles.blue])
 
 export default DaysOfWeek

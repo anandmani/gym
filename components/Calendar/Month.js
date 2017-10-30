@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import { StyleSheet, View, Text, AsyncStorage } from 'react-native'
 import { daysInMonth, getDay } from '../../utils'
 import Day from './Day'
+import { getMonthName } from '../../utils'
 
 const today = new Date()
 
@@ -43,6 +44,11 @@ export default class Month extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
+        <Text style={styles.title}>
+          {
+            `${getMonthName(this.props.month)} ${this.props.year}`
+          }
+        </Text>
         <View style={styles.grid}>
           {
             Array(this.numberOfDummyCells).fill().map((item, index) => (
@@ -61,13 +67,20 @@ export default class Month extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20
+    marginBottom: 5
   },
   grid: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 16
-  }
+  },
+  title: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    color: 'grey',
+    fontSize: 16,
+    padding: 2,
+  },
 })
 

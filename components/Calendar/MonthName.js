@@ -8,7 +8,9 @@ export default class MonthName extends PureComponent {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>
-          {getMonthName(this.props.month)}
+          {
+            `${getMonthName(this.props.month)} ${this.props.year}`
+          }
         </Text>
         <DaysOfWeek />
       </View>

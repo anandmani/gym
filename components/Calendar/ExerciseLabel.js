@@ -19,7 +19,6 @@ export default class ExerciseLabel extends PureComponent {
 
 const styles = StyleSheet.create({
   view: {
-    margin: 2,
     padding: 2,
     borderRadius: 4
   },

@@ -20,6 +20,20 @@ export function getMonthName(month) {
   return monthNames[month - 1]
 }
 
+export function getPreviousMonth({ month, year }) {
+  return ({
+    month: month === 1 ? 12 : month - 1,
+    year: month === 1 ? year - 1 : year
+  })
+}
+
+export function getNextMonth({ month, year }) {
+  return ({
+    month: month === 12 ? 1 : month + 1,
+    year: month === 12 ? year + 1 : year
+  })
+}
+
 export const colors = ['#a8e6cf', '#dcedc1', '#ffd3b6', '#ffaaa5', '#ff8b94']
 
 // export const getMonthArray = (month, year) => {

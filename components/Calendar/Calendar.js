@@ -1,25 +1,73 @@
 import React, { PureComponent } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet, Text, View, TouchableNativeFeedback, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ToolbarIcon from '../ToolbarIcon'
 import Month from './Month'
 import MonthName from './MonthName'
+import { getPreviousMonth, getNextMonth } from '../../utils'
 
 export default class Calendar extends PureComponent {
 
-  constructor(){
+  constructor() {
     super()
-    // this.today = new Date
+    this.today = new Date
+    this.state = {
+      months: this.getInitialMonths()
+    }
+  }
+
+  getInitialMonths = () => {
+    //Current month, prev month, next month
+    const thisMonth = {
+      month: this.today.getMonth() + 1,
+      year: this.today.getFullYear()
+    }
+    return [
+      thisMonth,
+      getPreviousMonth(thisMonth)
+    ]
+  }
+
+  addPrevMonth = () => {
+    const earliestMonth = this.state.months[this.state.months.length - 1]
+    const prevMonth = getPreviousMonth(earliestMonth)
+    this.setState({
+      months: [...this.state.months, prevMonth]
+    })
   }
 
   openDrawer = () => {
-    this.props.navigation.navigate('DrawerToggle')
+    // this.props.navigation.navigate('DrawerToggle')
+    this.list.scrollToEnd()
   }
 
   onWorkoutSubmit = () => {
     setTimeout(() => this.forceUpdate())
   }
 
+  keyExtractor = (item, index) => `${item.month}-${item.year}`
+
+  scrollToToday = () => this.list.scrollToIndex({
+    index: 0
+  })
+
+  renderMonth = ({ item, index }) => {  //notice {item, index}
+    return (
+      <View>
+        <MonthName
+          month={item.month}
+          year={item.year}
+        />
+        <Month
+          month={item.month}
+          year={item.year}
+          navigation={this.props.navigation}
+          onWorkoutSubmit={this.onWorkoutSubmit}
+          today={index === 0 ? this.today.getDate() : null}
+        />
+      </View>
+    )
+  }
 
   render() {
     return (
@@ -34,33 +82,19 @@ export default class Calendar extends PureComponent {
           >
             Calendar
           </Text>
+          <ToolbarIcon
+            iconName="md-arrow-down"
+            onPress={this.scrollToToday}
+          />
         </View>
-        <ScrollView
-          stickyHeaderIndices={[0, 2]}
-          style={styles.months}
-        >
-          <MonthName
-            month={10}
-          />
-          <Month
-            month={10}
-            year={2017}
-            navigation={this.props.navigation}
-            onWorkoutSubmit={this.onWorkoutSubmit}
-          />
-          {
-            /*
-          <MonthName
-            month={11}
-          />
-          <Month
-            month={11}
-            year={2017}
-          />
-            */
-          }
-        </ScrollView>
-
+        <FlatList
+          data={this.state.months}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderMonth}
+          ref={element => this.list = element}
+          onEndReached={this.addPrevMonth}
+          inverted
+        />
       </View >
     );
   }

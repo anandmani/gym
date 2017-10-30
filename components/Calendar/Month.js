@@ -36,6 +36,7 @@ export default class Month extends PureComponent {
       workout={this.state.workouts && this.state.workouts[`${index + 1}-${this.props.month}-${this.props.year}`]}
       navigation={this.props.navigation}
       onWorkoutSubmit={this.props.onWorkoutSubmit}
+      today={this.props.today === index + 1}
     />
   )
 

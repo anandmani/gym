@@ -24,7 +24,7 @@ export default class Day extends PureComponent {
         onPress={this.openWorkout}
       >
         <View style={styles.realCell}>
-          <Text style={styles.today}>
+          <Text style={this.props.today ? styles.today : styles.fs10}>
             {this.props.day}
           </Text>
           {
@@ -52,13 +52,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#e5e5e5',
     paddingTop: 10,
+    paddingHorizontal: 2
   },
   fs10: {
     fontSize: 10,
   },
   today: {
-    fontSize: 12,
-    color: 'blue'
+    fontSize: 10,
+    color: 'white',
+    backgroundColor: '#4ca6ff',
+    width: 15,
+    height: 15,
+    borderRadius: 8,
+    textAlign: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    left: -2
   }
 })
 

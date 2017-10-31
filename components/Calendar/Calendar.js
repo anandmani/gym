@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, TouchableNativeFeedback, FlatList, Vibration, BackHandler, ToastAndroid } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ToolbarIcon from '../ToolbarIcon'
+import AppBar, { AppBarIcon, AppTitle } from '../AppBar'
 import Month from './Month'
 import { getPreviousMonth, getNextMonth } from '../../utils'
 import DaysOfWeek from './DaysOfWeek'
@@ -119,38 +119,41 @@ export default class Calendar extends PureComponent {
     )
   }
 
+  renderAppBar = () => (
+    <AppBar>
+      <AppBarIcon
+        onPress={this.openDrawer}
+      />
+      <AppTitle>
+        {
+          this.state.compare ?
+            "Compare to"
+            :
+            "Calendar"
+        }
+      </AppTitle>
+      {
+        this.state.compare ?
+          <AppBarIcon
+            iconName="md-close"
+            onPress={this.resetCompare}
+          />
+          :
+          null
+      }
+      <AppBarIcon
+        iconName="md-arrow-down"
+        onPress={this.scrollToToday}
+      />
+    </AppBar>
+  )
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.toolbar}>
-          <ToolbarIcon
-            onPress={this.openDrawer}
-          />
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-          >
-            {
-              this.state.compare ?
-                "Compare to"
-                :
-                "Calendar"
-            }
-          </Text>
-          {
-            this.state.compare ?
-              <ToolbarIcon
-                iconName="md-close"
-                onPress={this.resetCompare}
-              />
-              :
-              null
-          }
-          <ToolbarIcon
-            iconName="md-arrow-down"
-            onPress={this.scrollToToday}
-          />
-        </View>
+        {
+          this.renderAppBar()
+        }
         <DaysOfWeek
           today={this.today.getDay()}
         />
@@ -175,26 +178,5 @@ export default class Calendar extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  toolbar: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white', //elevation doesnt work without background color for some reason
-    // elevation: 5,
-  },
-  title: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 20,
-    // color: 'white'
-  },
-  leftIcon: {
-    margin: 16,
-    // color: 'white'
-  },
-  months: {
-    flex: 1,
-    paddingBottom: 5
   }
 });

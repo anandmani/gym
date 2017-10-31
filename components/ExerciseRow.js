@@ -6,7 +6,9 @@ export default class ExerciseRow extends PureComponent {
 
   openExercise = () => this.props.navigation.navigate('Exercise', {
     name: this.props.name,
-    sets: this.props.sets
+    sets: this.props.sets,
+    index: this.props.index,
+    onSave: this.props.saveExercise
   })
 
   renderSets = (set, index) => {

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback, Button, AsyncStorage, ActivityIndicator, ToastAndroid } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import ExerciseRow from './ExerciseRow'
-import ToolbarIcon from './ToolbarIcon'
+import AppBar, { AppBarIcon, AppTitle } from './AppBar'
 import TextField from './TextField'
 import { modes } from '../utils'
 
@@ -114,6 +114,7 @@ export default class Workout extends PureComponent {
         sets={sets}
         onRemove={this.removeExercise}
         navigation={this.props.navigation}
+        saveExercise={this.saveExercise}
       />
     )
   }
@@ -151,34 +152,37 @@ export default class Workout extends PureComponent {
 
   goBack = () => this.props.navigation.goBack()
 
+  renderAppBar = () => (
+    <AppBar>
+      <AppBarIcon
+        iconName="md-arrow-back"
+        onPress={this.goBack}
+      />
+      <AppTitle>
+        Workout
+      </AppTitle>
+      {
+        this.mode === modes.edit ?
+          <AppBarIcon
+            iconName="md-trash"
+            onPress={this.handleDelete}
+          />
+          :
+          null
+      }
+      <AppBarIcon
+        iconName="md-checkmark"
+        onPress={this.handleSubmit}
+      />
+    </AppBar>
+  )
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.toolbar}>
-          <ToolbarIcon
-            iconName="md-arrow-back"
-            onPress={this.goBack}
-          />
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-          >
-            Workout
-          </Text>
-          {
-            this.mode === modes.edit ?
-              <ToolbarIcon
-                iconName="md-trash"
-                onPress={this.handleDelete}
-              />
-              :
-              null
-          }
-          <ToolbarIcon
-            iconName="md-checkmark"
-            onPress={this.handleSubmit}
-          />
-        </View>
+        {
+          this.renderAppBar()
+        }
         <View style={styles.nameWrapper}>
           <TextField
             placeholder="Name"
@@ -241,23 +245,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  toolbar: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // backgroundColor: '#1de8b5',
-    // elevation: 4
-  },
-  title: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 20,
-    // color: 'white'
-  },
-  rightIcon: {
-    margin: 16,
-    // color: 'white'
   },
   scrollView: {
     flex: 1

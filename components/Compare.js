@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet, ToastAndroid, AsyncStorage } from '
 import { Ionicons } from '@expo/vector-icons';
 import LineGraph from './LineGraph'
 import BarGraph from './BarGraph'
-import ToolbarIcon from './ToolbarIcon'
+import AppBar, { AppBarIcon, AppTitle } from './AppBar'
 
 export default class Compare extends PureComponent {
 
@@ -18,12 +18,6 @@ export default class Compare extends PureComponent {
   componentDidMount() {
     this.getWorkouts()
   }
-
-  // componentWillUpdate(nextProps, nextState){
-  //   if(this.state.fetching && !nextState.fetching){
-
-  //   }
-  // }
 
   mapExercises = (exercisesArray) => {
     const exercisesMap = {}
@@ -83,21 +77,24 @@ export default class Compare extends PureComponent {
     return commonExercises.map(this.chooseGraph)
   }
 
+  renderAppBar = () => (
+    <AppBar style={styles.toolbar}>
+      <AppBarIcon
+        iconName="md-arrow-back"
+        onPress={() => this.props.navigation.goBack()}
+      />
+      <AppTitle>
+        Compare
+      </AppTitle>
+    </AppBar>
+  )
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.toolbar}>
-          <ToolbarIcon
-            iconName="md-arrow-back"
-            onPress={() => this.props.navigation.goBack()}
-          />
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-          >
-            Compare
-          </Text>
-        </View>
+        {
+          this.renderAppBar()
+        }
         {
           !this.state.fetching ?
             <ScrollView>
@@ -119,23 +116,6 @@ export default class Compare extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  toolbar: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // backgroundColor: '#1de8b5',
-    // elevation: 4
-  },
-  title: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 20,
-    // color: 'white'
-  },
-  leftIcon: {
-    margin: 16,
-    // color: 'white'
   },
   pseudoScrollView: { //Adding this to fix a bug in 'react-native-svg' used by 'victory-native' that messes up scrolling in android
     backgroundColor: 'black',

@@ -3,9 +3,9 @@ import { StyleSheet, View, Text, TextInput, ScrollView, TouchableNativeFeedback,
 import { Ionicons } from '@expo/vector-icons';
 import { fromJS } from 'immutable'
 import Set from './Set'
-import ToolbarIcon from './ToolbarIcon'
+import AppBar, { AppBarIcon, AppTitle } from './AppBar'
 import TextField from './TextField'
-import {modes} from '../utils'
+import { modes } from '../utils'
 
 const defaultNewSet = {
   reps: null,
@@ -125,27 +125,28 @@ export default class Exercise extends PureComponent {
 
   goBack = () => this.props.navigation.goBack()
 
+  renderAppBar = () => (
+    <AppBar>
+      <AppBarIcon
+        iconName="md-arrow-back"
+        onPress={this.goBack}
+      />
+      <AppTitle>
+        Exercise
+      </AppTitle>
+      <AppBarIcon
+        iconName="md-checkmark"
+        onPress={this.handleSubmit}
+      />
+    </AppBar>
+  )
+
   render() {
     return (
       <View style={styles.container}>
-
-        <View style={styles.toolbar}>
-          <ToolbarIcon
-            iconName="md-arrow-back"
-            onPress={this.goBack}
-          />
-          <Text
-            style={styles.title}
-            numberOfLines={1}
-          >
-            Exercise
-          </Text>
-          <ToolbarIcon
-            iconName="md-checkmark"
-            onPress={this.handleSubmit}
-          />
-        </View>
-
+        {
+          this.renderAppBar()
+        }
         <View style={styles.nameWrapper}>
           <TextField
             placeholder="Name"
@@ -195,19 +196,6 @@ export default class Exercise extends PureComponent {
 const styles = new StyleSheet.create({
   container: {
     flex: 1,
-  },
-  toolbar: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // backgroundColor: '#1de8b5',
-    // elevation: 4
-  },
-  title: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 20,
-    // color: 'white'
   },
   scrollView: {
     flex: 1

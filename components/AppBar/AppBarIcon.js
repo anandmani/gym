@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const hitSlop = { top: 16, bottom: 16, left: 16, right: 16 }
 
-export default class ToolbarIcon extends PureComponent {
+export class AppBarIcon extends PureComponent {
   render() {
     return (
       <TouchableNativeFeedback
@@ -18,6 +18,7 @@ export default class ToolbarIcon extends PureComponent {
           <Ionicons
             name={this.props.iconName}
             size={32}
+            color="black"
           />
         </View>
       </TouchableNativeFeedback>
@@ -25,11 +26,11 @@ export default class ToolbarIcon extends PureComponent {
   }
 }
 
-ToolbarIcon.defaultProps = {
+AppBarIcon.defaultProps = {
   iconName: "md-menu",
   onPress: () => null,
   nativeFeedbackBackgroundColor: '#cccccc',
   viewStyle: {
-    margin: 16
+    margin: 16,
   }
 }

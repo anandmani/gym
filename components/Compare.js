@@ -1,11 +1,88 @@
 import React, { PureComponent } from 'react'
-import { View, Text, ScrollView, StyleSheet } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, ToastAndroid, AsyncStorage } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import LineGraph from './LineGraph'
 import BarGraph from './BarGraph'
 import ToolbarIcon from './ToolbarIcon'
 
 export default class Compare extends PureComponent {
+
+  constructor(props) {
+    super(props)
+    this.dbKeys = this.props.navigation.state.params.dbKeys
+    this.state = {
+      fetching: true
+    }
+  }
+
+  componentDidMount() {
+    this.getWorkouts()
+  }
+
+  // componentWillUpdate(nextProps, nextState){
+  //   if(this.state.fetching && !nextState.fetching){
+
+  //   }
+  // }
+
+  mapExercises = (exercisesArray) => {
+    const exercisesMap = {}
+    exercisesArray.forEach((exercise) => {
+      exercisesMap[exercise.name] = exercise
+    })
+    return exercisesMap
+  }
+
+  getWorkout = (dbKey) => (
+    AsyncStorage.getItem(dbKey)
+      .then((data) => JSON.parse(data))
+      .then((data) => ({
+        name: data.name,
+        date: dbKey,
+        exercises: this.mapExercises(data.exercises)
+      }))
+  )
+
+  getWorkouts = async () => {
+    const fetchPromises = this.dbKeys.map(this.getWorkout)
+    try {
+      this.workouts = await Promise.all(fetchPromises)
+      this.setState({ fetching: false })
+    } catch (err) {
+      ToastAndroid.show('Failed to fetch workouts', ToastAndroid.SHORT)
+      console.error(err)
+    }
+  }
+
+  chooseGraph = (exercise, index) => {
+    let GraphComponent = BarGraph
+    if (this.workouts[0].exercises[exercise].sets[0].reps && this.workouts[0].exercises[exercise].sets[0].measure) {
+      GraphComponent = LineGraph
+    }
+    return (
+      <GraphComponent
+        key={index}
+        exercises={[
+          {
+            date: this.workouts[0].date,
+            ...this.workouts[0].exercises[exercise]
+          },
+          {
+            date: this.workouts[1].date,
+            ...this.workouts[1].exercises[exercise]
+          }
+        ]}
+      />
+    )
+  }
+
+  getGraphs = () => {
+    const workoutOneExercises = Object.keys(this.workouts[0].exercises)
+    const workoutTwoExercises = Object.keys(this.workouts[1].exercises)
+    const commonExercises = workoutOneExercises.filter((exercise) => workoutTwoExercises.indexOf(exercise) >= 0)
+    return commonExercises.map(this.chooseGraph)
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -21,14 +98,22 @@ export default class Compare extends PureComponent {
             Compare
           </Text>
         </View>
-        <ScrollView>
-          {/* <LineGraph /> */}
-          {/* <BarGraph /> */}
-          <View style={styles.pseudoScrollView} />
-        </ScrollView>
+        {
+          !this.state.fetching ?
+            <ScrollView>
+              {
+                this.getGraphs()
+              }
+              {/* <BarGraph /> */}
+              <View style={styles.pseudoScrollView} />
+            </ScrollView>
+            :
+            null
+        }
       </View>
     )
   }
+
 }
 
 const styles = StyleSheet.create({

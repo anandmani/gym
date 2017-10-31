@@ -29,7 +29,58 @@ const styles = StyleSheet.create({
   }
 })
 
-export default class LineGraph extends Component {
+export default class BarGraph extends Component {
+  constructor(props) {
+    super(props)
+    this.findDependentAxis(props) //reps or measure
+    this.getAxes()
+    this.getBarGroups()
+  }
+
+  findDependentAxis = () => {
+    this.dependentAxis = this.props.exercises[0].sets[0].reps ? 'reps' : this.props.exercises[0].sets[0].measure.units
+  }
+
+  getAxes = () => {
+    this.axes = ['sets', this.dependentAxis]
+  }
+
+  getBarGroup = ({ sets }, groupIndex) => {
+    return sets.map((set, index) => {
+      const returnObject = {
+        set: index + 1,
+        x: groupIndex + 1 + index * 3 //for spacing alternatively
+      }
+      returnObject.y = this.dependentAxis === 'reps' ? set.reps : set.measure.value
+      return returnObject
+    })
+  }
+
+  getBarGroups = () => {
+    this.barGroups = this.props.exercises.map(this.getBarGroup)
+  }
+
+  getLegendRow = (exercise, index) => ({
+    name: exercise.date,
+    symbol: {
+      fill: colors[index]
+    }
+  })
+
+  getLegend = () => this.props.exercises.map(this.getLegendRow)
+
+  renderBarGroup = (data, index) => (
+    <VictoryBar
+      key={index}
+      style={{
+        data: { fill: colors[index] },
+        parent: { border: "1px solid #ccc" }
+      }}
+      data={data}
+      labels={d => d.set}
+    />
+  )
+
   render() {
     return (
       <View style={styles.container}>
@@ -37,7 +88,7 @@ export default class LineGraph extends Component {
           numberOfLines={1}
           style={styles.subHeading}
         >
-          Barbell Lifts Barbell Lifts Barbell Lifts Barbell Lifts Barbell Lifts
+          {this.props.exercises[0].name}
         </Text>
         <VictoryChart
           domainPadding={20}
@@ -47,23 +98,24 @@ export default class LineGraph extends Component {
           theme={VictoryTheme.material}
         >
           <VictoryLegend
-            x={250} y={50}
-            data={[
-              { name: "15-Oct", symbol: { fill: colors[0] } },
-              { name: "8-Oct", symbol: { fill: colors[1] } },
-            ]}
+            x={50} y={30}
+            orientation="horizontal"
+            data={this.getLegend()}
           />
           <VictoryAxis
-            label='sets'
+            label={this.axes[0]}
             style={xAxisStyle}
             tickCount={1}
           />
           <VictoryAxis
             dependentAxis
-            label='kg'
+            label={this.axes[1]}
             style={axisStyle}
           />
-          <VictoryBar
+          {
+            this.barGroups.map(this.renderBarGroup)
+          }
+          {/* <VictoryBar
             style={{
               data: { fill: colors[0] },
               parent: { border: "1px solid #ccc" }
@@ -86,7 +138,7 @@ export default class LineGraph extends Component {
               { y: 13, x: 8, set: 3 },
             ]}
             labels={d => d.set}
-          />
+          /> */}
         </VictoryChart>
       </View>
     );

@@ -72,8 +72,9 @@ export default class Calendar extends PureComponent {
 
   checkCompareComplete = ({ dbKey, hasWorkout }) => {
     if (hasWorkout) {
+      this.compareDates.push(dbKey)
+      this.props.navigation.navigate('Compare', { dbKeys: this.compareDates })
       this.resetCompare()
-      this.props.navigation.navigate('Compare')
     }
     else {
       ToastAndroid.show("Choose a day with a workout", ToastAndroid.SHORT)
@@ -97,15 +98,11 @@ export default class Calendar extends PureComponent {
 
   renderMonth = ({ item, index }) => {  //notice {item, index}
     const conditionalProps = {}
-    if (this.compareDates[0]) {
-      console.log(this.state.compare, Number(this.compareDates[0].split('-')[1]), index)
-    }
     if (index === 0) {
       conditionalProps.today = this.today.getDate()
     }
     if (this.state.compare && Number(this.compareDates[0].split('-')[1]) === item.month) {
       conditionalProps.selectedDay = Number(this.compareDates[0].split('-')[0])
-      console.log("sle", conditionalProps.selectedDay)
     }
     return (
       <View>

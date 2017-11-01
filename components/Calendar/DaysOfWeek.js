@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     height: 20,
     alignItems: 'center',
     paddingHorizontal: 16,
-    backgroundColor: '#f6f6f6'
-    // elevation: 1
+    backgroundColor: '#f6f6f6',
+    elevation: 4
   },
   day: {
     flex: 1,

@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   cell: {
     flexBasis: `${100 / 7}%`,
     height: (windowHeight - 200) / 6,
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0.2,
     borderBottomColor: '#e5e5e5',
     paddingTop: 10,
     paddingHorizontal: 2

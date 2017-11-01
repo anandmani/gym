@@ -57,11 +57,13 @@ export default class Month extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>
-          {
-            `${getMonthName(this.props.month)} ${this.props.year}`
-          }
-        </Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>
+            {
+              `${getMonthName(this.props.month)} ${this.props.year}`
+            }
+          </Text>
+        </View>
         <View style={styles.grid}>
           {
             Array(this.numberOfDummyCells).fill().map((item, index) => (
@@ -80,24 +82,34 @@ export default class Month extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 5
+    marginBottom: 8,
+    backgroundColor: 'white',
+    elevation: 2,
+    marginHorizontal: 8,
+    borderRadius: 8
   },
-  dummyCell: {
-    flexBasis: `${100 / 7}%`,
-    height: (windowHeight - 200) / 6
+  titleContainer: {
+    height: 40,
+    justifyContent: 'center',
+    borderBottomWidth: 0.4,
+    borderBottomColor: 'grey'
+  },
+  title: {
+    textAlign: 'center',
+    color: 'grey',
+    fontSize: 18,
+    backgroundColor: 'white'
   },
   grid: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16
+    paddingHorizontal: 8
+    // paddingHorizontal: 16
   },
-  title: {
-    textAlign: 'center',
-    justifyContent: 'center',
-    color: 'grey',
-    fontSize: 16,
-    padding: 2,
-  },
+  dummyCell: {
+    flexBasis: `${100 / 7}%`,
+    height: (windowHeight - 200) / 6
+  }
 })
 

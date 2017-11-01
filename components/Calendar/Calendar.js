@@ -165,6 +165,7 @@ export default class Calendar extends PureComponent {
           ref={element => this.list = element}
           onEndReached={this.addPrevMonth}
           inverted
+          style={styles.scrollView}
         />
         <DaysOfWeek
           today={this.today.getDay()}
@@ -178,5 +179,8 @@ export default class Calendar extends PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  scrollView: {
+    backgroundColor: '#eeeeee'
   }
 });

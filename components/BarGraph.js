@@ -15,17 +15,27 @@ const xAxisStyle = {
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'grey',
-    marginBottom: 16
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    elevation: 2,
+    marginBottom: 8,
+    marginHorizontal: 8
   },
-  subHeading: {
-    fontSize: 16,
-    color: 'grey',
+  titleContainer: {
+    height: 40,
     position: 'absolute',
-    top: 10,
-    left: 20,
-    right: 20
+    top: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    borderBottomWidth: 0.4,
+    borderBottomColor: 'grey'
+  },
+  title: {
+    textAlign: 'center',
+    color: 'grey',
+    fontSize: 18,
   }
 })
 
@@ -84,12 +94,14 @@ export default class BarGraph extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text
-          numberOfLines={1}
-          style={styles.subHeading}
-        >
-          {this.props.exercises[0].name}
-        </Text>
+        <View style={styles.titleContainer}>
+          <Text
+            numberOfLines={1}
+            style={styles.title}
+          >
+            {this.props.exercises[0].name}
+          </Text>
+        </View>
         <VictoryChart
           domainPadding={20}
           title='title'
@@ -98,7 +110,7 @@ export default class BarGraph extends Component {
           theme={VictoryTheme.material}
         >
           <VictoryLegend
-            x={50} y={30}
+            x={60} y={40}
             orientation="horizontal"
             data={this.getLegend()}
           />
@@ -111,6 +123,7 @@ export default class BarGraph extends Component {
             dependentAxis
             label={this.axes[1]}
             style={axisStyle}
+            tickFormat={(t) => Number.isInteger(t) ? `${Math.round(t)}` : ''}
           />
           {
             this.barGroups.map(this.renderBarGroup)

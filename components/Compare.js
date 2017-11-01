@@ -54,6 +54,7 @@ export default class Compare extends PureComponent {
       GraphComponent = LineGraph
     }
     return (
+      // <View style={styles.graphContainer} key={index}>
       <GraphComponent
         key={index}
         exercises={[
@@ -67,6 +68,7 @@ export default class Compare extends PureComponent {
           }
         ]}
       />
+      // </View>
     )
   }
 
@@ -97,7 +99,7 @@ export default class Compare extends PureComponent {
         }
         {
           !this.state.fetching ?
-            <ScrollView>
+            <ScrollView style={styles.scrollView}>
               {
                 this.getGraphs()
               }
@@ -117,6 +119,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scrollView: {
+    paddingTop: 8,
+    backgroundColor: '#eeeeee'
+  },
   pseudoScrollView: { //Adding this to fix a bug in 'react-native-svg' used by 'victory-native' that messes up scrolling in android
     backgroundColor: 'black',
     opacity: 0,
@@ -125,5 +131,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0
+  },
+  graphContainer: {
+    borderRadius: 8,
+    elevation: 2,
+    marginBottom: 8,
+    marginHorizontal: 8
   }
 })

@@ -19,6 +19,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white', //elevation doesnt work without background color for some reason
-    // elevation: 5,
+    elevation: 4,
   }
 })

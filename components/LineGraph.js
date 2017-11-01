@@ -4,24 +4,33 @@ import { VictoryChart, VictoryLine, VictoryTheme, VictoryAxis, VictoryLegend } f
 import { colors } from '../utils'
 
 const axisStyle = {
-  axisLabel: {
-    padding: 30
-  }
+  axisLabel: { padding: 30 },
+  tickLabels: { fontSize: 12, padding: 5 }
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'grey',
-    marginBottom: 16
+    flex: 1,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    elevation: 2,
+    marginBottom: 8,
+    marginHorizontal: 8
   },
-  subHeading: {
-    fontSize: 16,
-    color: 'grey',
+  titleContainer: {
+    height: 40,
     position: 'absolute',
-    top: 10,
-    left: 20,
-    right: 20
+    top: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    borderBottomWidth: 0.4,
+    borderBottomColor: 'grey'
+  },
+  title: {
+    textAlign: 'center',
+    color: 'grey',
+    fontSize: 18,
   }
 })
 
@@ -67,6 +76,7 @@ export default class LineGraph extends Component {
         key={index}
         label={axis}
         style={axisStyle}
+        tickFormat={(t) => Number.isInteger(t) ? `${Math.round(t)}` : ''}
         {...conditionalProps}
       />
     )
@@ -87,12 +97,14 @@ export default class LineGraph extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text
-          numberOfLines={1}
-          style={styles.subHeading}
-        >
-          {this.props.exercises[0].name}
-        </Text>
+        <View style={styles.titleContainer}>
+          <Text
+            numberOfLines={1}
+            style={styles.title}
+          >
+            {this.props.exercises[0].name}
+          </Text>
+        </View>
         <VictoryChart
           domainPadding={20}
           title='title'

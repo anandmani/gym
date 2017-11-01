@@ -6,7 +6,7 @@ import Month from './Month'
 import { getPreviousMonth, getNextMonth } from '../../utils'
 import DaysOfWeek from './DaysOfWeek'
 
-export const workoutColors = {
+export const workoutColors = { //Filled in during runtime
 }
 
 export default class Calendar extends PureComponent {
@@ -17,7 +17,8 @@ export default class Calendar extends PureComponent {
     this.compareDates = []
     this.state = {
       months: this.getInitialMonths(),
-      compare: false
+      compare: false,
+      refresh: {}
     }
     BackHandler.addEventListener('hardwareBackPress', this.backHandler)
   }
@@ -54,7 +55,14 @@ export default class Calendar extends PureComponent {
     this.props.navigation.navigate('DrawerToggle')
   }
 
-  onWorkoutSubmit = () => {
+  onWorkoutSubmit = (dbKey) => {
+    const month = Number(dbKey.split('-')[1])
+    this.setState({
+      refresh: {
+        month,
+        time: Date.now()
+      }
+    })
     setTimeout(() => this.forceUpdate())
   }
 
@@ -103,6 +111,9 @@ export default class Calendar extends PureComponent {
     }
     if (this.state.compare && Number(this.compareDates[0].split('-')[1]) === item.month) {
       conditionalProps.selectedDay = Number(this.compareDates[0].split('-')[0])
+    }
+    if (this.state.refresh.month === item.month) {
+      conditionalProps.refreshAt = this.state.refresh.timestamp
     }
     return (
       <View>

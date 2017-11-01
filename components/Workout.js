@@ -81,6 +81,7 @@ export default class Workout extends PureComponent {
   handleDelete = async () => {
     try {
       await Promise.all([this.deleteWorkoutName(), this.deleteWorkout()])
+      this.onSubmit(this.dbKey)
       this.props.navigation.goBack()
     } catch (error) {
       ToastAndroid.show('Failed to workout data (2)', ToastAndroid.SHORT)
@@ -146,7 +147,7 @@ export default class Workout extends PureComponent {
   handleSubmit = () => {
     if (this.validateForm()) {
       this.saveWorkout()
-      this.onSubmit()
+      this.onSubmit(this.dbKey)
     }
   }
 

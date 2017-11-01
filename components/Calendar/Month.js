@@ -28,9 +28,11 @@ export default class Month extends PureComponent {
       .then((workouts) => this.setState({ workouts: JSON.parse(workouts) }))
   }
 
-  componentWillUpdate() {
-    this.fetchWorkouts()
-      .then((workouts) => this.setState({ workouts: JSON.parse(workouts) }))
+  componentWillUpdate(nextProps) {
+    if (nextProps.refreshAt !== this.props.refreshAt) {
+      this.fetchWorkouts()
+        .then((workouts) => this.setState({ workouts: JSON.parse(workouts) }))
+    }
   }
 
   generateDbKey = (day, month, year) => `${day}-${month}-${year}`

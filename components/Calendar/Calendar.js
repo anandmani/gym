@@ -57,13 +57,14 @@ export default class Calendar extends PureComponent {
 
   onWorkoutSubmit = (dbKey) => {
     const month = Number(dbKey.split('-')[1])
+    const year = Number(dbKey.split('-')[2])
     this.setState({
       refresh: {
         month,
-        time: Date.now()
+        year,
+        timestamp: Date.now()
       }
     })
-    setTimeout(() => this.forceUpdate())
   }
 
   keyExtractor = (item, index) => `${item.month}-${item.year}`
@@ -112,7 +113,7 @@ export default class Calendar extends PureComponent {
     if (this.state.compare && Number(this.compareDates[0].split('-')[1]) === item.month) {
       conditionalProps.selectedDay = Number(this.compareDates[0].split('-')[0])
     }
-    if (this.state.refresh.month === item.month) {
+    if (this.state.refresh.month === item.month && this.state.refresh.year === item.year) {
       conditionalProps.refreshAt = this.state.refresh.timestamp
     }
     return (
@@ -170,7 +171,7 @@ export default class Calendar extends PureComponent {
         />
         <FlatList
           data={this.state.months}
-          extraData={this.state.compare}
+          extraData={this.state}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderMonth}
           ref={element => this.list = element}

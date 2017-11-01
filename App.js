@@ -1,32 +1,18 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
-import { StackNavigator } from 'react-navigation'
+import { DrawerNavigator, StackNavigator } from 'react-navigation'
 import Exponent from 'expo'
 import { Ionicons } from '@expo/vector-icons';
 import Calendar from './components/Calendar/Calendar'
 import Workout from './components/Workout'
 import Exercise from './components/Exercise'
 import Compare from './components/Compare'
+import Drawer from './components/Drawer'
 import sampleData from './sampleData.json'
 
-// class HomeScreen extends PureComponent {
-//   static navigationOptions = {
-//     drawerLabel: 'Calendar'
-//   };
-//   render() {
-//     return (
-//       <View style={styles.container}>
-//         {/* <Test /> */}
-//         {/* <Workout />  */}
-//         {/* <Exercise /> */}
-//         <Calendar />
-//         {/* <Compare /> */}
-//       </View>
-//     );
-//   }
-// }
+export const appVersion = 'v1.0.0-beta'
 
-const NavContainer = StackNavigator(
+const StackNavigatorContainer = StackNavigator(
   {
     Calendar: {
       screen: Calendar
@@ -49,12 +35,22 @@ const NavContainer = StackNavigator(
   }
 )
 
-const dummy = () => new Promise((resolve) => {
-  setTimeout(() => resolve(), 4000)
-})
+const NavContainer = DrawerNavigator(
+  {
+    Calendar: {
+      screen: StackNavigatorContainer
+    }
+  },
+  {
+    contentComponent: Drawer
+  }
+)
 
 export default class App extends PureComponent {
-  async componentDidMount() {
+
+  setAppVersion = () => AsyncStorage.setItem('appVersion', appVersion)
+
+  componentDidMount() {
     // val = {
     //   "25-10-2017": "Arms",
     //   "24-10-2017": "Back"
@@ -63,6 +59,7 @@ export default class App extends PureComponent {
     // AsyncStorage.setItem("25-10-2017", JSON.stringify(sampleData["25-10-2017"]))
     // AsyncStorage.setItem("24-10-2017", JSON.stringify(sampleData["24-10-2017"]))
   }
+
   render() {
     return (
       <View style={styles.container}>
@@ -70,6 +67,7 @@ export default class App extends PureComponent {
       </View>
     )
   }
+  
 }
 
 const styles = StyleSheet.create({
